@@ -9,6 +9,10 @@ case "$1" in
 		shift
 		PYTHONPATH=src python3 src/encode.py "$@"
 		;;
+	c)
+		shift
+		PYTHONPATH=src python3 src/cluster.py "$@"
+		;;
 	*)
 		echo "invalid option for run.sh"
 		;;
