@@ -26,7 +26,8 @@ def create_embeddings():
     tsne = TSNE(n_components=2)
     embeddings_2d = tsne.fit_transform(question_embeddings)
 
-    np.savez('embedding', embeddings_2d=embeddings_2d, urls=urls)
+    save_path = Path('data') / 'embeddings' / 'tsne' / 'embedding'
+    np.savez(str(save_path), embeddings_2d=embeddings_2d, urls=urls)
 
 
 class EmbeddingViewer(Viewer):
@@ -49,7 +50,8 @@ class EmbeddingViewer(Viewer):
 
 
 def show_embeddings():
-    embedding = np.load('embedding.npz')
+    embeddings_path = Path('data') / 'embeddings' / 'tsne' / 'embedding.npz'
+    embedding = np.load(str(embeddings_path))
     embeddings_2d = embedding['embeddings_2d']
     urls = embedding['urls']
 
