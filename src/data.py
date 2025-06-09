@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Generator, Tuple, Optional
+from typing import Iterator, Tuple, Optional
 from itertools import islice
 
 import numpy as np
@@ -16,7 +16,7 @@ class LoadDossiers:
             json_files = islice(json_files, limit)
         self.json_files = list(json_files)
 
-    def __iter__(self) -> Generator[Tuple[Path, PoliticianDossier]]:
+    def __iter__(self) -> Iterator[Tuple[Path, PoliticianDossier]]:
         for path in self.json_files:
             with open(path, 'r') as f:
                 data = json.load(f)
@@ -32,7 +32,7 @@ class LoadDossierEmbeddings:
         self.embedding_name = embedding_name
         self.data_dir = data_dir
 
-    def __iter__(self) -> Generator[Tuple[QuestionAnswerResult, np.ndarray, Optional[np.ndarray]]]:
+    def __iter__(self) -> Iterator[Tuple[QuestionAnswerResult, Optional[np.ndarray], Optional[np.ndarray]]]:
         embedding_dir = Path('data') / 'embeddings' / self.embedding_name / self.data_dir.name
         for path, dossier in self.load_dossiers:
             embedding_path = embedding_dir / path.relative_to(self.data_dir).with_suffix('.npz')
