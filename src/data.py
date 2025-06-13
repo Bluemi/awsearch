@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Iterator, Tuple, Optional
+from typing import Iterator, Tuple, Optional, Dict
 from itertools import islice
 
 import numpy as np
@@ -32,7 +32,7 @@ class LoadDossierEmbeddings:
         self.embedding_name = embedding_name
         self.data_dir = data_dir
 
-    def __iter__(self) -> Iterator[Tuple[QuestionAnswerResult, Optional[np.ndarray], Optional[np.ndarray]]]:
+    def __iter__(self) -> Iterator[Tuple[Path, int, QuestionAnswerResult, Optional[np.ndarray], Optional[np.ndarray]]]:
         embedding_dir = Path('data') / 'embeddings' / self.embedding_name / self.data_dir.name
         for path, dossier in self.load_dossiers:
             embedding_path = embedding_dir / path.relative_to(self.data_dir).with_suffix('.npz')
@@ -41,7 +41,7 @@ class LoadDossierEmbeddings:
             answer_embeddings = embedding['answer_embeddings']
             q_index = 0
             a_index = 0
-            for qa in dossier.questions_answers.questions_answers:
+            for i, qa in enumerate(dossier.questions_answers.questions_answers):
                 question_embedding = None
                 answer_embedding = None
                 if qa.question:
@@ -51,4 +51,18 @@ class LoadDossierEmbeddings:
                     answer_embedding = answer_embeddings[a_index]
                     a_index += 1
 
-                yield qa, question_embedding, answer_embedding
+                yield path, i, qa, question_embedding, answer_embedding
+
+
+def load_qa_id(qa_id: str, cache: Optional[Dict[str, PoliticianDossier]] = None) -> QuestionAnswerResult:
+    filename, i = qa_id.split(':')
+    i = int(i)
+
+    dossier = None
+    if cache is not None:
+        dossier = cache.get(filename)
+    if dossier is None:
+        with open(f'data/json/bundestag/{filename}', 'r') as file:
+            data = json.load(file)
+            dossier = PoliticianDossier.model_validate(data)
+    return dossier.questions_answers.questions_answers[i]

@@ -13,6 +13,10 @@ case "$1" in
 		shift
 		PYTHONPATH=src python3 src/cluster.py "$@"
 		;;
+	d)
+		shift
+		PYTHONPATH=src python3 src/dimension_reduction.py "$@"
+		;;
 	v)
 		shift
 		PYTHONPATH=src python3 src/visualize.py "$@"

@@ -13,7 +13,7 @@ def main():
     embeddings = LoadDossierEmbeddings(Path('data') / 'json' / 'bundestag', 'gte', limit=-1)
     question_embeddings = []
     urls = []
-    for qa, question_embedding, answer_embedding in embeddings:
+    for path, i, qa, question_embedding, answer_embedding in embeddings:
         if question_embedding is not None:
             question_embeddings.append(question_embedding)
             urls.append(qa.url)
