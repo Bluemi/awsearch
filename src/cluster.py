@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from data import LoadDossierEmbeddings
 
-N_CLUSTERS = 25
+N_CLUSTERS = 50
 
 
 def main():

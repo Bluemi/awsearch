@@ -9,14 +9,12 @@ from viztools.drawable.points import Points
 from viztools.viewer import Viewer
 
 from data import load_qa_id
-from helpers import ensure_high_contrast
 
 
 class EmbeddingViewer(Viewer):
     def __init__(self, points: np.ndarray, urls: list[str], qa_ids: List[str], color_ids: np.ndarray):
         super().__init__(screen_size=(0, 0))
         random_colors = np.random.randint(50, 255, (len(set(color_ids)), 3))
-        random_colors = ensure_high_contrast(random_colors)
         random_colors = np.concatenate((random_colors, np.full((len(random_colors), 1), 50)), axis=1)
         colors = random_colors[color_ids]
         self.points = Points(
@@ -42,7 +40,7 @@ class EmbeddingViewer(Viewer):
             if len(hovered_ids) > 0:
                 qa = load_qa_id(self.qa_ids[hovered_ids[0]], self.cache)
                 text_parts = ['\nFrage:']
-                max_length = 230
+                max_length = 190
                 text_parts.extend(cut_text(qa.question, max_length))
                 if qa.question_addition:
                     text_parts.extend(cut_text(qa.question_addition, max_length))
@@ -56,6 +54,7 @@ class EmbeddingViewer(Viewer):
                     OverlayPosition.BOT,
                     background_color=(30, 30, 30, 200),
                     border_color=(50, 50, 50, 200),
+                    font_name='liberationmono',
                 )
             else:
                 self.question_text = None
@@ -91,7 +90,7 @@ def show_embeddings():
     urls = embedding['urls']
     qa_ids = embedding['qa_ids']
 
-    with open('data/embeddings/cluster/bundestag/cluster75.json', 'r') as f:
+    with open('data/embeddings/cluster/bundestag/cluster50.json', 'r') as f:
         cluster = json.load(f)
 
     color_ids = np.array([cluster[url] for url in urls])
