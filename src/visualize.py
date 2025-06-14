@@ -1,3 +1,4 @@
+import argparse
 import json
 from pathlib import Path
 from typing import List
@@ -83,14 +84,22 @@ def cut_text(text: str, max_length: int):
 
     return parts
 
-def show_embeddings():
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--n_clusters', '-c', type=int, default=35)
+    return parser.parse_args()
+
+
+def main():
+    args = get_args()
     embeddings_path = Path('data') / 'embeddings' / 'tsne' / 'embedding.npz'
     embedding = np.load(str(embeddings_path))
     embeddings_2d = embedding['embeddings_2d']
     urls = embedding['urls']
     qa_ids = embedding['qa_ids']
 
-    with open('data/embeddings/cluster/bundestag/cluster50.json', 'r') as f:
+    with open(f'data/embeddings/cluster/bundestag/cluster{args.n_clusters}.json', 'r') as f:
         cluster = json.load(f)
 
     color_ids = np.array([cluster[url] for url in urls])
@@ -101,4 +110,4 @@ def show_embeddings():
 
 
 if __name__ == '__main__':
-    show_embeddings()
+    main()

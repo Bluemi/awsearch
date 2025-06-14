@@ -43,8 +43,18 @@ class ClusterTopicExtractor:
         return answer['choices'][0]['message']['content']
 
 
+def get_args():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('n_clusters', type=int, nargs='+')
+    parser.add_argument('--limit', type=int, default=-1)
+    return parser.parse_args()
+
+
 def main():
-    embeddings = LoadDossierEmbeddings(Path('data') / 'json' / 'bundestag', 'gte', limit=-1)
+    args = get_args()
+
+    embeddings = LoadDossierEmbeddings(Path('data') / 'json' / 'bundestag', 'gte', limit=args.limit)
     question_embeddings = []
     urls = []
     questions = []
@@ -56,7 +66,7 @@ def main():
     question_embeddings = np.array(question_embeddings)
 
     extractor = ClusterTopicExtractor()
-    for n_clusters in [25, 35, 50, 75, 100, 150, 250, 500]:
+    for n_clusters in args.n_clusters:
         find_clusters(question_embeddings, questions, urls, n_clusters, extractor)
 
 
