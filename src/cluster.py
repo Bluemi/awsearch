@@ -1,5 +1,6 @@
-import json
+import argparse
 import random
+import json
 from collections import defaultdict
 from pathlib import Path
 from typing import List
@@ -44,10 +45,10 @@ class ClusterTopicExtractor:
 
 
 def get_args():
-    import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('n_clusters', type=int, nargs='+')
     parser.add_argument('--limit', type=int, default=-1)
+    parser.add_argument('--d2', action='store_true', help='use 2d embeddings')
     return parser.parse_args()
 
 
@@ -65,18 +66,22 @@ def main():
             urls.append(qa.url)
     question_embeddings = np.array(question_embeddings)
 
+    if args.d2:
+        question_embeddings = np.load(Path('data') / 'embeddings' / 'tsne' / 'embedding.npz')['embeddings_2d']
+
     extractor = ClusterTopicExtractor()
     for n_clusters in args.n_clusters:
-        find_clusters(question_embeddings, questions, urls, n_clusters, extractor)
+        find_clusters(question_embeddings, questions, urls, n_clusters, extractor, args.d2)
 
 
-def find_clusters(question_embeddings, questions, urls, n_clusters, extractor):
+def find_clusters(question_embeddings, questions, urls, n_clusters, extractor, d2):
+    d2_str = '_2d' if d2 else ''
     print('running clustering')
     kmeans = MiniBatchKMeans(n_clusters=n_clusters, batch_size=10000, verbose=True)
     kmeans.fit(question_embeddings)
     prediction = kmeans.predict(question_embeddings)
     url_to_cluster = {url: int(p) for url, p in zip(urls, prediction)}
-    with open(f'data/embeddings/cluster/bundestag/cluster{n_clusters}.json', 'w') as f:
+    with open(f'data/embeddings/cluster/bundestag/cluster{n_clusters}{d2_str}.json', 'w') as f:
         json.dump(url_to_cluster, f, indent=2)
     cluster_to_questions = defaultdict(list)
     for cluster, q in zip(prediction, questions):
@@ -86,7 +91,7 @@ def find_clusters(question_embeddings, questions, urls, n_clusters, extractor):
         questions = random.choices(questions, k=10)
         topic = extractor(questions)
         cluster_to_topic[cluster_id] = topic
-    with open(f'data/embeddings/cluster/bundestag/topics{n_clusters}.json', 'w') as f:
+    with open(f'data/embeddings/cluster/bundestag/topics{n_clusters}{d2_str}.json', 'w') as f:
         json.dump(cluster_to_topic, f, indent=2)
 
 

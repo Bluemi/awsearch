@@ -95,6 +95,7 @@ def cut_text(text: str, max_length: int):
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--n_clusters', '-c', type=int, default=35)
+    parser.add_argument('--d2', action='store_true', help='use 2d embeddings')
     return parser.parse_args()
 
 
@@ -105,11 +106,12 @@ def main():
     embeddings_2d = embedding['embeddings_2d']
     urls = embedding['urls']
     qa_ids = embedding['qa_ids']
+    d2_str = '_2d' if args.d2 else ''
 
-    with open(f'data/embeddings/cluster/bundestag/cluster{args.n_clusters}.json', 'r') as f:
+    with open(f'data/embeddings/cluster/bundestag/cluster{args.n_clusters}{d2_str}.json', 'r') as f:
         cluster = json.load(f)
 
-    with open(f'data/embeddings/cluster/bundestag/topics{args.n_clusters}.json', 'r') as f:
+    with open(f'data/embeddings/cluster/bundestag/topics{args.n_clusters}{d2_str}.json', 'r') as f:
         topics_dict = json.load(f)
 
     cluster_ids = np.array([cluster[url] for url in urls])
