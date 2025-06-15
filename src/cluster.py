@@ -48,12 +48,23 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('n_clusters', type=int, nargs='+')
     parser.add_argument('--limit', type=int, default=-1)
-    parser.add_argument('--d2', action='store_true', help='use 2d embeddings')
+    parser.add_argument(
+        '--ratio2d', type=float, default=0.5,
+        help='How much to use the 2d embedding coordinates for clustering. '
+             '0.0 means not to use it, 1.0 means only use it. Defaults to 0.5'
+    )
     return parser.parse_args()
 
 
 def main():
     args = get_args()
+
+    d2_data = np.load(Path('data') / 'embeddings' / 'tsne' / 'embedding.npz')
+    embeddings_2d = d2_data['embeddings_2d']
+    # normalize embeddings
+    embeddings_2d = embeddings_2d / np.max(embeddings_2d, axis=0, keepdims=True)
+    urls = d2_data['urls']
+    url_2d_emb = {url: d2e for url, d2e in zip(urls, embeddings_2d)}
 
     embeddings = LoadDossierEmbeddings(Path('data') / 'json' / 'bundestag', 'gte', limit=args.limit)
     question_embeddings = []
@@ -61,28 +72,30 @@ def main():
     questions = []
     for path, i, qa, question_embedding, answer_embedding in tqdm(embeddings, desc='loading data'):
         if question_embedding is not None:
-            question_embeddings.append(question_embedding)
+            full_embeddings = np.concatenate((
+                question_embedding * (1.0 - args.ratio2d),
+                url_2d_emb[qa.url] * args.ratio2d
+            ))
+            question_embeddings.append(full_embeddings)
             questions.append(f'{qa.question}\n{qa.question_addition}')
             urls.append(qa.url)
     question_embeddings = np.array(question_embeddings)
 
-    if args.d2:
-        question_embeddings = np.load(Path('data') / 'embeddings' / 'tsne' / 'embedding.npz')['embeddings_2d']
-
     extractor = ClusterTopicExtractor()
     for n_clusters in args.n_clusters:
-        find_clusters(question_embeddings, questions, urls, n_clusters, extractor, args.d2)
+        find_clusters(question_embeddings, questions, urls, n_clusters, extractor)
 
 
-def find_clusters(question_embeddings, questions, urls, n_clusters, extractor, d2):
-    d2_str = '_2d' if d2 else ''
+def find_clusters(question_embeddings, questions, urls, n_clusters, extractor):
     print('running clustering')
     kmeans = MiniBatchKMeans(n_clusters=n_clusters, batch_size=10000, verbose=True)
     kmeans.fit(question_embeddings)
     prediction = kmeans.predict(question_embeddings)
     url_to_cluster = {url: int(p) for url, p in zip(urls, prediction)}
-    with open(f'data/embeddings/cluster/bundestag/cluster{n_clusters}{d2_str}.json', 'w') as f:
+    with open(f'data/embeddings/cluster/bundestag/cluster{n_clusters}.json', 'w') as f:
         json.dump(url_to_cluster, f, indent=2)
+
+    # find topics
     cluster_to_questions = defaultdict(list)
     for cluster, q in zip(prediction, questions):
         cluster_to_questions[int(cluster)].append(q)
@@ -91,7 +104,7 @@ def find_clusters(question_embeddings, questions, urls, n_clusters, extractor, d
         questions = random.choices(questions, k=10)
         topic = extractor(questions)
         cluster_to_topic[cluster_id] = topic
-    with open(f'data/embeddings/cluster/bundestag/topics{n_clusters}{d2_str}.json', 'w') as f:
+    with open(f'data/embeddings/cluster/bundestag/topics{n_clusters}.json', 'w') as f:
         json.dump(cluster_to_topic, f, indent=2)
 
 
