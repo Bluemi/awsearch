@@ -14,7 +14,7 @@ class LoadDossiers:
         json_files = data_dir.rglob("*.json")
         if limit > 0:
             json_files = islice(json_files, limit)
-        self.json_files = list(json_files)
+        self.json_files = sorted(list(json_files))
 
     def __iter__(self) -> Iterator[Tuple[Path, PoliticianDossier]]:
         for path in self.json_files:
