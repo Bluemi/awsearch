@@ -38,7 +38,9 @@ class EmbeddingViewer(Viewer):
             size=2
         )
         self.cluster_labels = [
-            OverlayText(t, p, font_size=16, color=c, background_color=np.array([0, 0, 0, 100])) for t, p, c in zip(topics, cluster_centers, all_colors)
+            OverlayText(
+                t, p, font_size=16, color=c, background_color=np.array([0, 0, 0, 180]), font_name='liberationmono',
+            ) for t, p, c in zip(topics, cluster_centers, all_colors)
         ]
         self.question_text: OverlayText | None = None
         self.urls = urls
@@ -55,9 +57,9 @@ class EmbeddingViewer(Viewer):
     def handle_event(self, event: pg.event.Event):
         super().handle_event(event)
         if event.type == pg.MOUSEMOTION:
-            hovered_ids = self.points.hovered_points(self.mouse_pos, self.coordinate_system)
-            if len(hovered_ids) > 0:
-                qa = load_qa_id(self.qa_ids[hovered_ids[0]], self.cache)
+            point_index, dist = self.points.closest_point(self.mouse_pos, self.coordinate_system)
+            if dist < 10:
+                qa = load_qa_id(self.qa_ids[point_index], self.cache)
                 text_parts = ['\nFrage:']
                 max_length = 190
                 text_parts.extend(cut_text(qa.question, max_length))
