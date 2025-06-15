@@ -12,22 +12,33 @@ from viztools.viewer import Viewer
 from data import load_qa_id
 
 
+def random_colors(n):
+    colors = np.random.randint(0, 256, size=(n, 3), dtype=np.uint8)
+    mask = colors.max(axis=1) < 100
+    count = mask.sum()
+    if count:
+        idx = np.random.randint(0, 3, size=count)
+        colors[mask, idx] = np.random.randint(100, 256, size=count, dtype=np.uint8)
+
+    return np.concatenate((colors, np.full((n, 1), 50)), axis=1)
+
+
 class EmbeddingViewer(Viewer):
     def __init__(
             self, points: np.ndarray, urls: list[str], qa_ids: List[str], color_ids: np.ndarray,
             cluster_centers: np.ndarray, topics: List[str]
     ):
         super().__init__(screen_size=(0, 0))
-        random_colors = np.random.randint(50, 255, (len(set(color_ids)), 3))
-        random_colors = np.concatenate((random_colors, np.full((len(random_colors), 1), 50)), axis=1)
-        colors = random_colors[color_ids]
+        n_colors = np.max(color_ids) + 1
+        all_colors = random_colors(n_colors)
+        colors = all_colors[color_ids]
         self.points = Points(
             points,
             color=colors,
-            size=4
+            size=2
         )
         self.cluster_labels = [
-            OverlayText(t, p, font_size=16, color=c, background_color=np.array([0, 0, 0, 100])) for t, p, c in zip(topics, cluster_centers, random_colors)
+            OverlayText(t, p, font_size=16, color=c, background_color=np.array([0, 0, 0, 100])) for t, p, c in zip(topics, cluster_centers, all_colors)
         ]
         self.question_text: OverlayText | None = None
         self.urls = urls
@@ -119,11 +130,15 @@ def main():
     # calculate 2d cluster centers
     cluster_centers = []
     topics = []
-    for c_id in sorted(set(cluster_ids)):
+    for c_id in range(np.max(cluster_ids) + 1):
         indices = np.equal(cluster_ids, c_id)
-        cluster_center = np.mean(embeddings_2d[indices], axis=0)
+        emb_2d = embeddings_2d[indices]
+        if len(emb_2d) == 0:
+            cluster_center = np.zeros(2)
+        else:
+            cluster_center = np.mean(emb_2d, axis=0)
         cluster_centers.append(cluster_center)
-        topics.append(topics_dict[str(c_id)])
+        topics.append(topics_dict.get(str(c_id), ' '))
     cluster_centers = np.array(cluster_centers)
 
     assert len(cluster) == len(embeddings_2d) == len(urls) == len(qa_ids)
