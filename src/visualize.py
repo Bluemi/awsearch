@@ -56,7 +56,7 @@ class EmbeddingViewer(Viewer):
 
     def handle_event(self, event: pg.event.Event):
         super().handle_event(event)
-        if event.type == pg.MOUSEMOTION:
+        if event.type == pg.MOUSEBUTTONUP and event.button == 1:
             point_index, dist = self.points.closest_point(self.mouse_pos, self.coordinate_system)
             if dist < 10:
                 qa = load_qa_id(self.qa_ids[point_index], self.cache)
