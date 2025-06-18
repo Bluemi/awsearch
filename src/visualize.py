@@ -12,7 +12,7 @@ from viztools.viewer import Viewer
 from data import load_qa_id
 
 
-def random_colors(n):
+def random_colors(n, alpha_value=50):
     colors = np.random.randint(0, 256, size=(n, 3), dtype=np.uint8)
     mask = colors.max(axis=1) < 100
     count = mask.sum()
@@ -20,17 +20,18 @@ def random_colors(n):
         idx = np.random.randint(0, 3, size=count)
         colors[mask, idx] = np.random.randint(100, 256, size=count, dtype=np.uint8)
 
-    return np.concatenate((colors, np.full((n, 1), 50)), axis=1)
+    return np.concatenate((colors, np.full((n, 1), alpha_value)), axis=1)
 
 
 class EmbeddingViewer(Viewer):
     def __init__(
             self, points: np.ndarray, urls: list[str], qa_ids: List[str], color_ids: np.ndarray,
-            cluster_centers: np.ndarray, topics: List[str]
+            cluster_centers: np.ndarray, topics: List[str], overview_centers: np.ndarray, overview_urls: List[str],
+            overview_color_ids: np.ndarray, overview_qa_ids: List[str],
     ):
         super().__init__(screen_size=(0, 0))
         n_colors = np.max(color_ids) + 1
-        all_colors = random_colors(n_colors)
+        all_colors = random_colors(n_colors, 50)
         colors = all_colors[color_ids]
         self.points = Points(
             points,
@@ -42,14 +43,29 @@ class EmbeddingViewer(Viewer):
                 t, p, font_size=16, color=c, background_color=np.array([0, 0, 0, 180]), font_name='liberationmono',
             ) for t, p, c in zip(topics, cluster_centers, all_colors)
         ]
+        overview_colors = all_colors[overview_color_ids]
+        self.overview_points = Points(
+            overview_centers,
+            color=overview_colors,
+            size=5,
+        )
         self.question_text: OverlayText | None = None
         self.urls = urls
+        self.overview_urls = overview_urls
         self.qa_ids = qa_ids
+        self.overview_qa_ids = overview_qa_ids
         self.cache = {}
 
+    def _get_render_points(self):
+        if self.coordinate_system.zoom_factor > 10:
+            return self.points
+        else:
+            return self.overview_points
+
     def render(self):
-        self.render_coordinate_system(draw_numbers=False)
-        self.render_drawables([self.points])
+        self.render_coordinate_system(draw_numbers=True)
+        points = self._get_render_points()
+        self.render_drawables([points])
         self.render_drawables(self.cluster_labels)
         if self.question_text:
             self.render_drawables([self.question_text])
@@ -57,9 +73,11 @@ class EmbeddingViewer(Viewer):
     def handle_event(self, event: pg.event.Event):
         super().handle_event(event)
         if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-            point_index, dist = self.points.closest_point(self.mouse_pos, self.coordinate_system)
+            points = self._get_render_points()
+            qa_ids = self.qa_ids if self.coordinate_system.zoom_factor > 10 else self.overview_qa_ids
+            point_index, dist = points.closest_point(self.mouse_pos, self.coordinate_system)
             if dist < 10:
-                qa = load_qa_id(self.qa_ids[point_index], self.cache)
+                qa = load_qa_id(qa_ids[point_index], self.cache)
                 text_parts = ['\nFrage:']
                 max_length = 190
                 text_parts.extend(cut_text(qa.question, max_length))
@@ -145,7 +163,18 @@ def main():
 
     assert len(cluster) == len(embeddings_2d) == len(urls) == len(qa_ids)
     assert len(cluster_centers) == len(topics), f'{len(cluster_centers)} != {len(topics)}'
-    viewer = EmbeddingViewer(embeddings_2d, urls, qa_ids, cluster_ids, cluster_centers, topics)
+
+    with open(f'data/embeddings/cluster/bundestag/overview40000.json', 'r') as f:
+        overview_list = json.load(f)
+
+    overview_points = np.array([p['center_point'] for p in overview_list])
+    overview_urls = [p['url'] for p in overview_list]
+    overview_cluster_ids = np.array([cluster[o['url']] for o in overview_list])
+    overview_qa_ids = [o['qa_id'] for o in overview_list]
+    viewer = EmbeddingViewer(
+        embeddings_2d, urls, qa_ids, cluster_ids, cluster_centers, topics, overview_points, overview_urls,
+        overview_cluster_ids, overview_qa_ids
+    )
     viewer.run()
 
 
