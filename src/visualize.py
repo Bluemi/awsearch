@@ -63,7 +63,7 @@ class EmbeddingViewer(Viewer):
             return self.overview_points
 
     def render(self):
-        self.render_coordinate_system(draw_numbers=True)
+        self.render_coordinate_system(draw_numbers=False)
         points = self._get_render_points()
         self.render_drawables([points])
         self.render_drawables(self.cluster_labels)
