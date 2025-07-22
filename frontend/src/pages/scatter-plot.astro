@@ -1,0 +1,632 @@
+---
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxPlot Scatter Plot Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        body.light-mode {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .light-mode .container {
+            background: white;
+            color: #2d3748;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #4a5568;
+            color: #e2e8f0;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .theme-toggle:hover {
+            background: #718096;
+            transform: translateY(-1px);
+        }
+        
+        .light-mode .theme-toggle {
+            background: #667eea;
+            color: white;
+        }
+        
+        .light-mode .theme-toggle:hover {
+            background: #5a67d8;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+        
+        .light-mode h1 {
+            color: #2d3748;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #a0aec0;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .light-mode .subtitle {
+            color: #718096;
+        }
+        
+        .plot-container {
+            background: #1a202c;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 2px solid #4a5568;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .plot-container {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+        }
+        
+        .light-mode button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .info-panel {
+            background: #1a202c;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid #4299e1;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .info-panel {
+            background: #edf2f7;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-panel h3 {
+            margin: 0 0 0.5rem 0;
+            color: #e2e8f0;
+            transition: color 0.3s ease;
+        }
+        
+        .light-mode .info-panel h3 {
+            color: #2d3748;
+        }
+        
+        .info-panel p {
+            margin: 0;
+            color: #a0aec0;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+        
+        .light-mode .info-panel p {
+            color: #4a5568;
+        }
+        
+        #plot {
+            width: 100%;
+            height: 400px;
+            border-radius: 8px;
+            background: #2d3748;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+        
+        .light-mode #plot {
+            background: white;
+        }
+        
+        .zoom-instructions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(45, 55, 72, 0.9);
+            color: #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            border: 1px solid #4a5568;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .zoom-instructions {
+            background: rgba(255, 255, 255, 0.9);
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
+        
+        <h1>📊 MaxPlot Scatter Plot Demo</h1>
+        <p class="subtitle">Interactive scatter plot visualization using the maxPlot library</p>
+        
+        <div class="controls">
+            <button onclick="generateRandomData()">🎲 Generate Random Data</button>
+            <button onclick="loadTestData()">📊 Load Test Data</button>
+            <button onclick="generateCorrelatedData()">📈 Correlated Data</button>
+            <button onclick="generateClusteredData()">🎯 Clustered Data</button>
+            <button onclick="toggleAnimation(event)">✨ Toggle Animation</button>
+        </div>
+        
+        <div class="plot-container">
+            <div id="plot"></div>
+            <div class="zoom-instructions">
+                🖱️ Scroll to zoom • Drag to pan • Double-click to reset
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>About MaxPlot</h3>
+            <p>
+                MaxPlot is a lightweight, fast JavaScript plotting library designed for creating beautiful 
+                interactive visualizations. This scatter plot demonstrates real-time data updates, 
+                smooth animations, and responsive design. Click the buttons above to see different 
+                data patterns and interactions!
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/maximilianh/maxPlot@main/maxPlot.js"></script>
+    <script>
+        let plot;
+        let animationEnabled = true;
+        let isDarkMode = true;
+        let currentData;
+        
+        // Initialize the plot
+        function initPlot() {
+            const plotDiv = document.getElementById('plot');
+            
+            // Create initial data
+            const data = generateScatterData(50, 'random');
+            
+            // Configure plot options
+            const options = {
+                width: plotDiv.offsetWidth,
+                height: 400,
+                margin: { top: 20, right: 30, bottom: 40, left: 50 },
+                title: 'Interactive Scatter Plot',
+                xLabel: 'X Values',
+                yLabel: 'Y Values',
+                showGrid: true,
+                pointSize: 6,
+                pointColor: isDarkMode ? '#4299e1' : '#667eea',
+                pointHoverColor: isDarkMode ? '#63b3ed' : '#764ba2',
+                animation: {
+                    duration: 800,
+                    easing: 'easeInOutCubic'
+                }
+            };
+            
+            // Create the plot
+            plot = new MaxPlot.ScatterPlot(plotDiv, data, options);
+            
+            // Add hover interactions
+            plot.on('pointHover', function(point, index) {
+                plot.setPointColor(index, options.pointHoverColor);
+                showTooltip(point.x, point.y, index);
+            });
+            
+            plot.on('pointLeave', function(point, index) {
+                plot.setPointColor(index, options.pointColor);
+                hideTooltip();
+            });
+        }
+        
+        // Generate different types of scatter data
+        function generateScatterData(count, type = 'random') {
+            const data = [];
+            
+            switch(type) {
+                case 'random':
+                    for (let i = 0; i < count; i++) {
+                        data.push({
+                            x: Math.random() * 100,
+                            y: Math.random() * 100
+                        });
+                    }
+                    break;
+                    
+                case 'correlated':
+                    for (let i = 0; i < count; i++) {
+                        const x = Math.random() * 100;
+                        const y = x * 0.8 + Math.random() * 20;
+                        data.push({ x, y });
+                    }
+                    break;
+                    
+                case 'clustered':
+                    const clusters = [
+                        { centerX: 25, centerY: 25 },
+                        { centerX: 75, centerY: 75 },
+                        { centerX: 25, centerY: 75 },
+                        { centerX: 75, centerY: 25 }
+                    ];
+                    
+                    for (let i = 0; i < count; i++) {
+                        const cluster = clusters[i % clusters.length];
+                        data.push({
+                            x: cluster.centerX + (Math.random() - 0.5) * 20,
+                            y: cluster.centerY + (Math.random() - 0.5) * 20
+                        });
+                    }
+                    break;
+            }
+            
+            return data;
+        }
+        
+        // Update plot with new data
+        function updatePlot(data) {
+            if (plot) {
+                if (animationEnabled) {
+                    plot.updateData(data, { animate: true });
+                } else {
+                    plot.updateData(data, { animate: false });
+                }
+            }
+        }
+        
+        // Button event handlers
+        window.generateRandomData = function() {
+            const data = generateScatterData(50, 'random');
+            updatePlot(data);
+        };
+        
+        window.generateCorrelatedData = function() {
+            const data = generateScatterData(50, 'correlated');
+            updatePlot(data);
+        };
+        
+        window.generateClusteredData = function() {
+            const data = generateScatterData(60, 'clustered');
+            updatePlot(data);
+        };
+        
+        window.toggleAnimation = function(event) {
+            animationEnabled = !animationEnabled;
+            const button = event.target;
+            button.textContent = animationEnabled ? '✨ Toggle Animation' : '⏸️ Animation Off';
+        };
+        
+        // Theme toggle function
+        window.toggleTheme = function() {
+            isDarkMode = !isDarkMode;
+            const body = document.body;
+            const button = document.querySelector('.theme-toggle');
+            
+            if (isDarkMode) {
+                body.classList.remove('light-mode');
+                button.textContent = '☀️ Light Mode';
+            } else {
+                body.classList.add('light-mode');
+                button.textContent = '🌙 Dark Mode';
+            }
+            
+            // Update plot colors if plot exists
+            if (plot) {
+                const newPointColor = isDarkMode ? '#4299e1' : '#667eea';
+                const newHoverColor = isDarkMode ? '#63b3ed' : '#764ba2';
+                plot.updateColors(newPointColor, newHoverColor);
+            }
+        };
+        
+        // Load test data from API
+        window.loadTestData = async function() {
+            try {
+                const response = await fetch('/api/data.json');
+                const data = await response.json();
+                currentData = data; // Update currentData to persist through zoom/pan
+                updatePlot(data);
+            } catch (error) {
+                console.error('Error loading test data:', error);
+                // Fallback to random data if API fails
+                generateRandomData();
+            }
+        };
+        
+        // Tooltip functions
+        function showTooltip(x, y, index) {
+            // Simple tooltip implementation
+            const tooltip = document.getElementById('tooltip') || createTooltip();
+            tooltip.innerHTML = `Point ${index + 1}<br>X: ${x.toFixed(2)}<br>Y: ${y.toFixed(2)}`;
+            tooltip.style.display = 'block';
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip) {
+                tooltip.style.display = 'none';
+            }
+        }
+        
+        function createTooltip() {
+            const tooltip = document.createElement('div');
+            tooltip.id = 'tooltip';
+            tooltip.style.cssText = `
+                position: absolute;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-size: 12px;
+                pointer-events: none;
+                z-index: 1000;
+                display: none;
+            `;
+            document.body.appendChild(tooltip);
+            return tooltip;
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (plot) {
+                const plotDiv = document.getElementById('plot');
+                plot.resize(plotDiv.offsetWidth, 400);
+            }
+        });
+        
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            // Since maxPlot might not be available via CDN, we'll create a fallback
+            if (typeof MaxPlot === 'undefined') {
+                createFallbackVisualization();
+            } else {
+                initPlot();
+            }
+        });
+        
+        // Fallback visualization using Canvas API
+        function createFallbackVisualization() {
+            const plotDiv = document.getElementById('plot');
+            const canvas = document.createElement('canvas');
+            canvas.width = plotDiv.offsetWidth;
+            canvas.height = 400;
+            canvas.style.width = '100%';
+            canvas.style.height = '400px';
+            canvas.style.borderRadius = '8px';
+            canvas.style.background = 'white';
+            canvas.style.cursor = 'grab';
+            
+            plotDiv.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            let currentData = generateScatterData(50, 'random');
+            
+            // Zoom and pan state
+            let scale = 1;
+            let offsetX = 0;
+            let offsetY = 0;
+            let isDragging = false;
+            let lastMouseX = 0;
+            let lastMouseY = 0;
+            
+            // Mouse event handlers for zoom and pan
+            canvas.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+                const newScale = Math.max(0.1, Math.min(10, scale * zoomFactor));
+                
+                // Zoom towards mouse position
+                const scaleChange = newScale / scale;
+                offsetX = mouseX - (mouseX - offsetX) * scaleChange;
+                offsetY = mouseY - (mouseY - offsetY) * scaleChange;
+                
+                scale = newScale;
+                drawPlot(currentData);
+            });
+            
+            canvas.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+                canvas.style.cursor = 'grabbing';
+            });
+            
+            canvas.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    const deltaX = e.clientX - lastMouseX;
+                    const deltaY = e.clientY - lastMouseY;
+                    
+                    offsetX += deltaX;
+                    offsetY += deltaY;
+                    
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                    
+                    drawPlot(currentData);
+                }
+            });
+            
+            canvas.addEventListener('mouseup', function() {
+                isDragging = false;
+                canvas.style.cursor = 'grab';
+            });
+            
+            canvas.addEventListener('mouseleave', function() {
+                isDragging = false;
+                canvas.style.cursor = 'grab';
+            });
+            
+            // Double-click to reset zoom
+            canvas.addEventListener('dblclick', function() {
+                scale = 1;
+                offsetX = 0;
+                offsetY = 0;
+                drawPlot(currentData);
+            });
+            
+            function drawPlot(data) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Save context for transformations
+                ctx.save();
+                
+                // Apply zoom and pan transformations
+                ctx.translate(offsetX, offsetY);
+                ctx.scale(scale, scale);
+                
+                // Draw grid
+                ctx.strokeStyle = isDarkMode ? '#4a5568' : '#e2e8f0';
+                ctx.lineWidth = 1;
+                const gridSize = 50;
+                const startX = Math.floor(-offsetX / scale / gridSize) * gridSize;
+                const endX = Math.ceil((canvas.width - offsetX) / scale / gridSize) * gridSize;
+                const startY = Math.floor(-offsetY / scale / gridSize) * gridSize;
+                const endY = Math.ceil((canvas.height - offsetY) / scale / gridSize) * gridSize;
+                
+                for (let x = startX; x <= endX; x += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, startY);
+                    ctx.lineTo(x, endY);
+                    ctx.stroke();
+                }
+                    
+                for (let y = startY; y <= endY; y += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(startX, y);
+                    ctx.lineTo(endX, y);
+                    ctx.stroke();
+                }
+                
+                // Draw points
+                data.forEach((point, index) => {
+                    const x = (point.x + 3) * 50; // Scale and offset for better visibility
+                    const y = (3 - point.y) * 50; // Flip Y axis and scale
+                    
+                    ctx.fillStyle = isDarkMode ? '#4299e1' : '#667eea';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4 / scale, 0, 2 * Math.PI); // Adjust point size based on zoom
+                    ctx.fill();
+                });
+                
+                // Restore context
+                ctx.restore();
+                
+                // Draw title
+                ctx.fillStyle = isDarkMode ? '#e2e8f0' : '#2d3748';
+                ctx.font = '16px -apple-system, BlinkMacSystemFont, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Scatter Plot Visualization', canvas.width / 2, 25);
+                
+                // Draw zoom info
+                ctx.fillStyle = isDarkMode ? '#a0aec0' : '#718096';
+                ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Zoom: ${(scale * 100).toFixed(0)}%`, 10, canvas.height - 10);
+            }
+            
+            // Override button functions for fallback
+            window.generateRandomData = function() {
+                currentData = generateScatterData(50, 'random');
+                drawPlot(currentData);
+            };
+            
+            window.loadTestData = async function() {
+                try {
+                    const response = await fetch('/api/data.json');
+                    const data = await response.json();
+                    currentData = data; // Update currentData for fallback visualization
+                    drawPlot(data);
+                } catch (error) {
+                    console.error('Error loading test data:', error);
+                    generateRandomData();
+                }
+            };
+            
+            window.generateCorrelatedData = function() {
+                currentData = generateScatterData(50, 'correlated');
+                drawPlot(currentData);
+            };
+            
+            window.generateClusteredData = function() {
+                currentData = generateScatterData(60, 'clustered');
+                drawPlot(currentData);
+            };
+            
+            // Initial draw
+            drawPlot(currentData);
+        }
+    </script>
+</body>
+</html>
