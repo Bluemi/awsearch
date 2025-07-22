@@ -13,13 +13,13 @@ from viztools.viewer import Viewer
 from data import load_qa_id
 
 
-def random_colors(n, alpha_value=50):
+def random_colors(n, alpha_value=50, min_value=150):
     colors = np.random.randint(0, 256, size=(n, 3), dtype=np.uint8)
-    mask = colors.max(axis=1) < 100
+    mask = colors.max(axis=1) < min_value
     count = mask.sum()
     if count:
         idx = np.random.randint(0, 3, size=count)
-        colors[mask, idx] = np.random.randint(100, 256, size=count, dtype=np.uint8)
+        colors[mask, idx] = np.random.randint(min_value, 256, size=count, dtype=np.uint8)
 
     return np.concatenate((colors, np.full((n, 1), alpha_value)), axis=1)
 
@@ -36,7 +36,7 @@ class EmbeddingViewer(Viewer):
         self.points = Points(
             points,
             color=colors,
-            size=5,
+            size=0.2,
             chunk_size=12500.0,
         )
         self.cluster_labels = [
