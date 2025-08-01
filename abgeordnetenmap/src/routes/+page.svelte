@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+	let questions = $state(["Das ist eine Frage"]);
 </script>
 
 <style>
@@ -68,6 +69,28 @@
         border: 1px solid #ccc;
         border-radius: 5px;
     }
+
+		.map-section {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			gap: 2.5rem;
+			padding: 1rem;
+		}
+
+		#map {
+				height: 60vh;
+				width: 60%;
+				background-color: #babdbe;
+		}
+
+		.question-section {
+				width: 45%;
+		}
+
+		.question-header {
+				margin-top: 0;
+		}
 </style>
 
 <main>
@@ -89,6 +112,20 @@
 				</div>
 			</div>
 			<input type="text" class="search-input" placeholder="Suche Thema">
+		</section>
+
+		<section class="map-section">
+			<div id="map"></div>
+			<div class="question-section">
+				<h1 class="question-header">Fragen</h1>
+				{#if questions.length == 0}
+					Keine Fragen ausgewählt
+				{:else}
+					{#each questions as question}
+						<div class="question">{question}</div>
+					{/each}
+				{/if}
+			</div>
 		</section>
 
 	</div>
