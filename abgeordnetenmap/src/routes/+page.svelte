@@ -7,7 +7,7 @@
         margin: auto;
         width: 85%;
         min-height: 100vh;
-        background-color: #dfe2e3; /* A dark gray */
+        background-color: #dfe2e3;
         @media (max-width: 768px) {
             width: 100%;
             margin: 0;
