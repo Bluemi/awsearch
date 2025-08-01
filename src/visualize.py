@@ -29,7 +29,7 @@ class EmbeddingViewer(Viewer):
             self, points: np.ndarray, urls: list[str], qa_ids: List[str], color_ids: np.ndarray,
             cluster_centers: np.ndarray, topics: List[str]
     ):
-        super().__init__(screen_size=(0, 0))
+        super().__init__(screen_size=(0, 0), drag_mouse_button=3)
         n_colors = np.max(color_ids) + 1
         all_colors = random_colors(n_colors, 50)
         colors = all_colors[color_ids]
