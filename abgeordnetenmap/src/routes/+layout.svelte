@@ -7,6 +7,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>AbgeordnetenMap</title>
 </svelte:head>
 
 {@render children?.()}

@@ -31,7 +31,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 45px;
+        gap: 5%;
         flex-wrap: wrap;
 				padding: 2rem;
     }
@@ -61,6 +61,7 @@
     }
 
     .search-input {
+        font-size: 1.0rem;
         flex-grow: 1;
         max-width: 250px;
         padding: 10px;
