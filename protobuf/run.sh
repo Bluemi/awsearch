@@ -9,5 +9,5 @@ fi
 protoc --proto_path=. --python_out=py ./questionbase.proto
 
 # generate typescript code
-mkdir js
+mkdir -p js
 node_modules/.bin/pbjs -t static-module questionbase.proto | node_modules/.bin/pbts -o js/bundle.d.ts -

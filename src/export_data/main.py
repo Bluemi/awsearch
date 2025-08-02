@@ -35,32 +35,67 @@ def main():
 
     cluster_ids = np.array([cluster[url] for url in urls])
 
-    questionbase = questionbase_pb2.QuestionBase()
+    preview_questionbase = questionbase_pb2.PreviewQuestionBase()
+    complete_questionbase = questionbase_pb2.CompleteQuestionBase()
 
     # export questions
-    for pos, url, cluster_id in zip(embeddings_2d, urls, cluster_ids):
-        question = questionbase_pb2.Question()
-        question.x = float(pos[0])
-        question.y = float(pos[1])
-        question.cluster_id = int(cluster_id)
-        questionbase.questions.append(question)
+    for index, (pos, url, cluster_id) in enumerate(zip(embeddings_2d, urls, cluster_ids)):
+        # preview questions
+        preview_question = questionbase_pb2.PreviewQuestion()
+        preview_question.x = float(pos[0])
+        preview_question.y = float(pos[1])
+        preview_question.cluster_id = int(cluster_id)
+        preview_questionbase.questions.append(preview_question)
+
+        # complete questions
+        qa = url_to_question[url]
+        question_text = qa.question or ''
+        if qa.question_addition:
+            question_text = question_text + '\n' + qa.question_addition
+
+        answer_text = None
+        answer_date = None
+        if qa.answer:
+            answer_text = qa.answer
+            answer_date = qa.get_answer_date()
+
+        complete_question = questionbase_pb2.CompleteQuestion()
+        complete_question.id = index
+        complete_question.url = url
+        complete_question.question = question_text
+        complete_question.question_date = qa.get_question_date()
+
+        if answer_text:
+            complete_question.answer = answer_text
+            complete_question.answer_date = answer_date
+        complete_questionbase.questions.append(complete_question)
 
     # export clusters
     cluster_centers, topics = load_cluster_data(args, cluster_ids, embeddings_2d)
     for index, (center, topic) in enumerate(zip(cluster_centers, topics)):
-        cluster = questionbase_pb2.Cluster()
+        cluster = questionbase_pb2.PreviewCluster()
         cluster.topic = topic
         cluster.center_x = float(center[0])
         cluster.center_y = float(center[1])
-        questionbase.clusters.append(cluster)
+        preview_questionbase.clusters.append(cluster)
 
-    buf = questionbase.SerializeToString()
+    buf = preview_questionbase.SerializeToString()
 
-    out_file = 'data/export/export.bin'
-    with open(out_file, 'wb') as f:
+    export_dir = Path('data/export')
+    export_dir.mkdir(parents=True, exist_ok=True)
+
+    preview_out_file = export_dir / 'preview_export.bin'
+    with open(preview_out_file, 'wb') as f:
         f.write(buf)
         buflen = len(buf)
-    print(f'Wrote {buflen} bytes to {out_file}')
+    print(f'Wrote {buflen} bytes to {preview_out_file}')
+
+    buf = complete_questionbase.SerializeToString()
+    complete_out_file = export_dir / 'complete_export.bin'
+    with open(complete_out_file, 'wb') as f:
+        f.write(buf)
+        buflen = len(buf)
+    print(f'Wrote {buflen} bytes to {complete_out_file}')
 
 
 def load_cluster_data(args, cluster_ids, embeddings_2d):

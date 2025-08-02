@@ -24,17 +24,21 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12questionbase.proto\x12\x0f\x61\x62geordnetenmap\"4\n\x08Question\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\x12\x12\n\ncluster_id\x18\x03 \x01(\x05\"<\n\x07\x43luster\x12\r\n\x05topic\x18\x01 \x01(\t\x12\x10\n\x08\x63\x65nter_x\x18\x02 \x01(\x02\x12\x10\n\x08\x63\x65nter_y\x18\x03 \x01(\x02\"h\n\x0cQuestionBase\x12,\n\tquestions\x18\x01 \x03(\x0b\x32\x19.abgeordnetenmap.Question\x12*\n\x08\x63lusters\x18\x02 \x03(\x0b\x32\x18.abgeordnetenmap.Clusterb\x08\x65\x64itionsp\xe8\x07')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12questionbase.proto\x12\x0f\x61\x62geordnetenmap\";\n\x0fPreviewQuestion\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\x12\x12\n\ncluster_id\x18\x03 \x01(\x05\"C\n\x0ePreviewCluster\x12\r\n\x05topic\x18\x01 \x01(\t\x12\x10\n\x08\x63\x65nter_x\x18\x02 \x01(\x02\x12\x10\n\x08\x63\x65nter_y\x18\x03 \x01(\x02\"}\n\x13PreviewQuestionBase\x12\x33\n\tquestions\x18\x01 \x03(\x0b\x32 .abgeordnetenmap.PreviewQuestion\x12\x31\n\x08\x63lusters\x18\x02 \x03(\x0b\x32\x1f.abgeordnetenmap.PreviewCluster\"\x9e\x01\n\x10\x43ompleteQuestion\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03url\x18\x02 \x01(\t\x12\x10\n\x08question\x18\x03 \x01(\t\x12\x15\n\rquestion_date\x18\x04 \x01(\t\x12\x13\n\x06\x61nswer\x18\x05 \x01(\tH\x00\x88\x01\x01\x12\x18\n\x0b\x61nswer_date\x18\x06 \x01(\tH\x01\x88\x01\x01\x42\t\n\x07_answerB\x0e\n\x0c_answer_date\"L\n\x14\x43ompleteQuestionBase\x12\x34\n\tquestions\x18\x01 \x03(\x0b\x32!.abgeordnetenmap.CompleteQuestionb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'questionbase_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_QUESTION']._serialized_start=39
-  _globals['_QUESTION']._serialized_end=91
-  _globals['_CLUSTER']._serialized_start=93
-  _globals['_CLUSTER']._serialized_end=153
-  _globals['_QUESTIONBASE']._serialized_start=155
-  _globals['_QUESTIONBASE']._serialized_end=259
+  _globals['_PREVIEWQUESTION']._serialized_start=39
+  _globals['_PREVIEWQUESTION']._serialized_end=98
+  _globals['_PREVIEWCLUSTER']._serialized_start=100
+  _globals['_PREVIEWCLUSTER']._serialized_end=167
+  _globals['_PREVIEWQUESTIONBASE']._serialized_start=169
+  _globals['_PREVIEWQUESTIONBASE']._serialized_end=294
+  _globals['_COMPLETEQUESTION']._serialized_start=297
+  _globals['_COMPLETEQUESTION']._serialized_end=455
+  _globals['_COMPLETEQUESTIONBASE']._serialized_start=457
+  _globals['_COMPLETEQUESTIONBASE']._serialized_end=533
 # @@protoc_insertion_point(module_scope)

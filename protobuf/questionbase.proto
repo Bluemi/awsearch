@@ -1,20 +1,33 @@
-edition = "2023";
+syntax = "proto3";
 
 package abgeordnetenmap;
 
-message Question {
+message PreviewQuestion {
   float x = 1;
   float y = 2;
   int32 cluster_id = 3;
 }
 
-message Cluster {
+message PreviewCluster {
   string topic = 1;
   float center_x = 2;
   float center_y = 3;
 }
 
-message QuestionBase {
-  repeated Question questions = 1;
-  repeated Cluster clusters = 2;
+message PreviewQuestionBase {
+  repeated PreviewQuestion questions = 1;
+  repeated PreviewCluster clusters = 2;
+}
+
+message CompleteQuestion {
+  int32 id = 1;
+  string url = 2;
+  string question = 3;
+  string question_date = 4;
+  optional string answer = 5;
+  optional string answer_date = 6;
+}
+
+message CompleteQuestionBase {
+  repeated CompleteQuestion questions = 1;
 }
