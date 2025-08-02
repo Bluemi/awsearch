@@ -9,10 +9,6 @@ import flatbuffers
 from abgeordnetenwatch_python.models.questions_answers import QuestionAnswerResult
 from tqdm import tqdm
 
-import export_data.models.Point as Point
-import export_data.models.Cluster as Cluster
-import export_data.models.Question as Question
-import export_data.models.QuestionBase as QuestionBase
 from data import LoadDossiers
 
 
