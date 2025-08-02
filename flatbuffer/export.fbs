@@ -1,0 +1,27 @@
+struct Point {
+  x:float;
+  y:float;
+}
+
+table Question {
+  pos:Point;
+  url:string;
+  question_text:string;
+  question_date:string;
+  answer:string;
+  answer_date:string;
+  cluster_id:short;
+}
+
+table Cluster {
+  id:short;
+  center:Point;
+  topic:string;
+}
+
+table QuestionBase {
+  questions:[Question];
+  clusters:[Cluster];
+}
+
+root_type QuestionBase;
