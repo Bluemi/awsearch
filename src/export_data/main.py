@@ -1,15 +1,14 @@
 import argparse
 import json
 from typing import Dict
-
-import numpy as np
 from pathlib import Path
 
-import flatbuffers
+import numpy as np
 from abgeordnetenwatch_python.models.questions_answers import QuestionAnswerResult
 from tqdm import tqdm
 
 from data import LoadDossiers
+import questionbase_pb2
 
 
 def get_args():
@@ -36,53 +35,29 @@ def main():
 
     cluster_ids = np.array([cluster[url] for url in urls])
 
-    # export questions
-    builder = flatbuffers.Builder(1024)
-    questions = []
-    for pos, url, cluster_id in zip(embeddings_2d, urls, cluster_ids):
-        qa = url_to_question[url]
-        url = builder.CreateString(url)
-        question_date = builder.CreateString(qa.get_question_date())
-        answer_date = None
-        if qa.answer_date:
-            answer_date = builder.CreateString(qa.get_answer_date())
+    questionbase = questionbase_pb2.QuestionBase()
 
-        Question.Start(builder)
-        Question.AddPos(builder, Point.CreatePoint(builder, float(pos[0]), float(pos[1])))
-        Question.AddUrl(builder, url)
-        Question.AddQuestionDate(builder, question_date)
-        if answer_date:
-            Question.AddAnswerDate(builder, answer_date)
-        Question.AddClusterId(builder, int(cluster_id))
-        questions.append(Question.End(builder))
-    QuestionBase.StartQuestionsVector(builder, len(questions))
-    for q in questions[::-1]:
-        builder.PrependUOffsetTRelative(q)
-    questions = builder.EndVector()
+    # export questions
+    for pos, url, cluster_id in zip(embeddings_2d, urls, cluster_ids):
+        question = questionbase_pb2.Question()
+        question.x = float(pos[0])
+        question.y = float(pos[1])
+        question.cluster_id = int(cluster_id)
+        questionbase.questions.append(question)
 
     # export clusters
     cluster_centers, topics = load_cluster_data(args, cluster_ids, embeddings_2d)
-    clusters = []
     for index, (center, topic) in enumerate(zip(cluster_centers, topics)):
-        topic = builder.CreateString(topic)
-        Cluster.Start(builder)
-        Cluster.AddCenter(builder, Point.CreatePoint(builder, float(center[0]), float(center[1])))
-        Cluster.AddTopic(builder, topic)
-        Cluster.AddId(builder, index)
-        clusters.append(Cluster.End(builder))
+        cluster = questionbase_pb2.Cluster()
+        cluster.topic = topic
+        cluster.center_x = float(center[0])
+        cluster.center_y = float(center[1])
+        questionbase.clusters.append(cluster)
 
-    QuestionBase.StartClustersVector(builder, len(clusters))
-    for c in clusters[::-1]:
-        builder.PrependUOffsetTRelative(c)
-    clusters = builder.EndVector()
+    buf = questionbase.SerializeToString()
 
-    QuestionBase.Start(builder)
-    QuestionBase.AddQuestions(builder, questions)
-    QuestionBase.AddClusters(builder, clusters)
-    builder.Finish(QuestionBase.End(builder))
     out_file = 'data/export/export.bin'
     with open(out_file, 'wb') as f:
-        buf = builder.Output()
         f.write(buf)
         buflen = len(buf)
     print(f'Wrote {buflen} bytes to {out_file}')
