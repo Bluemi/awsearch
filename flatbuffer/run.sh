@@ -7,4 +7,11 @@ case "$1" in
 	ts)
 		flatc --ts -o ts export.fbs
 		;;
+	all)
+		flatc --python -o py export.fbs
+		flatc --ts -o ts export.fbs
+		;;
+	*)
+		echo "invalid option"
+		;;
 esac

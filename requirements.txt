@@ -11,4 +11,4 @@ scikit-learn~=1.6.1
 matplotlib==3.10.3
 viztools~=0.3
 pygame~=2.6
-
+flatbuffers~=25.2

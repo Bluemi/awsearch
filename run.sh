@@ -9,6 +9,10 @@ case "$1" in
 		shift
 		PYTHONPATH=src python3 src/encode.py "$@"
 		;;
+	ed)
+		shift
+		PYTHONPATH=src python3 src/export_data/main.py "$@"
+		;;
 	c)
 		shift
 		PYTHONPATH=src python3 src/cluster.py "$@"

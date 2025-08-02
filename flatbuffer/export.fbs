@@ -6,9 +6,7 @@ struct Point {
 table Question {
   pos:Point;
   url:string;
-  question_text:string;
   question_date:string;
-  answer:string;
   answer_date:string;
   cluster_id:short;
 }

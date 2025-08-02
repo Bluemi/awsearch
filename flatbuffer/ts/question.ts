@@ -37,41 +37,27 @@ url(optionalEncoding?:any):string|Uint8Array|null {
   return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 }
 
-questionText():string|null
-questionText(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
-questionText(optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
-}
-
 questionDate():string|null
 questionDate(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
 questionDate(optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 10);
-  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
-}
-
-answer():string|null
-answer(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
-answer(optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 12);
+  const offset = this.bb!.__offset(this.bb_pos, 8);
   return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 }
 
 answerDate():string|null
 answerDate(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
 answerDate(optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 14);
+  const offset = this.bb!.__offset(this.bb_pos, 10);
   return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 }
 
 clusterId():number {
-  const offset = this.bb!.__offset(this.bb_pos, 16);
+  const offset = this.bb!.__offset(this.bb_pos, 12);
   return offset ? this.bb!.readInt16(this.bb_pos + offset) : 0;
 }
 
 static startQuestion(builder:flatbuffers.Builder) {
-  builder.startObject(7);
+  builder.startObject(5);
 }
 
 static addPos(builder:flatbuffers.Builder, posOffset:flatbuffers.Offset) {
@@ -82,24 +68,16 @@ static addUrl(builder:flatbuffers.Builder, urlOffset:flatbuffers.Offset) {
   builder.addFieldOffset(1, urlOffset, 0);
 }
 
-static addQuestionText(builder:flatbuffers.Builder, questionTextOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(2, questionTextOffset, 0);
-}
-
 static addQuestionDate(builder:flatbuffers.Builder, questionDateOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(3, questionDateOffset, 0);
-}
-
-static addAnswer(builder:flatbuffers.Builder, answerOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(4, answerOffset, 0);
+  builder.addFieldOffset(2, questionDateOffset, 0);
 }
 
 static addAnswerDate(builder:flatbuffers.Builder, answerDateOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(5, answerDateOffset, 0);
+  builder.addFieldOffset(3, answerDateOffset, 0);
 }
 
 static addClusterId(builder:flatbuffers.Builder, clusterId:number) {
-  builder.addFieldInt16(6, clusterId, 0);
+  builder.addFieldInt16(4, clusterId, 0);
 }
 
 static endQuestion(builder:flatbuffers.Builder):flatbuffers.Offset {
@@ -107,13 +85,11 @@ static endQuestion(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 }
 
-static createQuestion(builder:flatbuffers.Builder, posOffset:flatbuffers.Offset, urlOffset:flatbuffers.Offset, questionTextOffset:flatbuffers.Offset, questionDateOffset:flatbuffers.Offset, answerOffset:flatbuffers.Offset, answerDateOffset:flatbuffers.Offset, clusterId:number):flatbuffers.Offset {
+static createQuestion(builder:flatbuffers.Builder, posOffset:flatbuffers.Offset, urlOffset:flatbuffers.Offset, questionDateOffset:flatbuffers.Offset, answerDateOffset:flatbuffers.Offset, clusterId:number):flatbuffers.Offset {
   Question.startQuestion(builder);
   Question.addPos(builder, posOffset);
   Question.addUrl(builder, urlOffset);
-  Question.addQuestionText(builder, questionTextOffset);
   Question.addQuestionDate(builder, questionDateOffset);
-  Question.addAnswer(builder, answerOffset);
   Question.addAnswerDate(builder, answerDateOffset);
   Question.addClusterId(builder, clusterId);
   return Question.endQuestion(builder);
