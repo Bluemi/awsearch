@@ -1,0 +1,20 @@
+edition = "2023";
+
+package abgeordnetenmap;
+
+message Question {
+  float x = 1;
+  float y = 2;
+  int32 cluster_id = 3;
+}
+
+message Cluster {
+  string topic = 1;
+  float center_x = 2;
+  float center_y = 3;
+}
+
+message QuestionBase {
+  repeated Question questions = 1;
+  repeated Cluster clusters = 2;
+}
