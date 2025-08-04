@@ -114,6 +114,8 @@ export function MaxPlot(div, top, left, width, height, args) {
         // div.style.display = "block";
         self.div = div;
 
+				div.style.position = "relative";
+
         self.gSampleDescription = "cell";
         self.ctx = null; // the canvas context
         self.canvas = addCanvasToDiv(div, top, left, width, height-gStatusHeight );
@@ -435,7 +437,7 @@ export function MaxPlot(div, top, left, width, height, args) {
        div.id = "mpProgressBars";
        div.style.top = top+"px";
        div.style.left = left+"px";
-       div.style.position = "relative";
+       div.style.position = "absolute";
 
        var htmls = [];
        for (var i=0; i<3; i++) {
@@ -1886,11 +1888,14 @@ export function MaxPlot(div, top, left, width, height, args) {
         var minX = Math.min(x1, x2);
         var minY = Math.min(y1, y2);
         var div = self.selectBox;
-        div.style.left = minX+"px";
-        div.style.top = minY+"px";
+				let xCanvasPos = self.canvas.getBoundingClientRect().left;
+				let yCanvasPos = self.canvas.getBoundingClientRect().top;
+        div.style.left = minX + "px";
+        div.style.top = minY + "px";
         div.style.width = selectWidth+"px";
         div.style.height = selectHeight+"px";
         div.style.display = "block";
+				div.style.position = "absolute";
     };
 
     this.activatePlot = function() {

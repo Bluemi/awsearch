@@ -41,7 +41,6 @@
 			fig.setColors(["000000", "ff0000", "00ff00", "0000ff"]);
 			// and assign every circle its own color
 			fig.setColorArr([0, 1, 2, 3, 2]);
-			fig.setTitle("Example plot");
 			// and draw it
 			fig.drawDots();
 		}
