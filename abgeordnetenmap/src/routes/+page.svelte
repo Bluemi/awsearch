@@ -42,7 +42,7 @@
 				[],
 				{}, {}
 			);
-			// set four different colors
+			// set different colors
 			fig.setColors([
 				"ff0000", "ff8000", "ffff00", "80ff00", "00ff00", "00ff80", "00ffff", "0080ff", "0000ff", "8000ff", "ff00ff",
 				"ff0080", "808080", "c0c0c0", "404040", "ff6666", "66ff66", "6666ff", "ffa366", "66ffa3", "a366ff", "ffff99",
