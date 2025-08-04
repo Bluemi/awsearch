@@ -189,7 +189,7 @@
 		}
 
 		#map {
-				height: 60vh;
+				height: clamp(400px, 60vw, 100vh - 200px);
 				width: 60%;
 				background-color: #babdbe;
 		}
