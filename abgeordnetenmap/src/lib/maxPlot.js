@@ -136,7 +136,7 @@ export function MaxPlot(div, top, left, width, height, args) {
             var selectDiv = document.createElement('div');
             selectDiv.id = "mpSelectBox";
             selectDiv.style.border = "1px dotted black";
-            selectDiv.style.position = "absolute";
+            selectDiv.style.position = "relative";
             selectDiv.style.display  = "none";
             selectDiv.style.pointerEvents = "none";
             self.div.appendChild(selectDiv);
@@ -245,21 +245,6 @@ export function MaxPlot(div, top, left, width, height, args) {
         self.title = text;
         self.titleDiv.innerHTML = text;
     };
-
-    this.setWatermark = function (text) {
-        if (text==="") {
-            //var elem = gebi("tpWatermark");
-            self.watermark.parentNode.removeChild(self.watermark);
-            self.watermark = undefined;
-        } else {
-            var elem = document.createElement('div');
-            elem.id = "tpWatermark";
-            elem.style.cssText = 'pointer-events: none;position: absolute; width: 1000px; opacity: 0.3; z-index: 1000; top: 100px; left: 100px; text-align: left; vertical-align: top; color: black; font-size: xx-large;';
-            elem.textContent = text;
-            gebi("tpMaxPlot").appendChild(elem);
-            self.watermark = elem;
-        }
-    }
 
     // -- (private) helper functions
     // -- these are normal functions, not methods, they do not access "self"
@@ -410,7 +395,7 @@ export function MaxPlot(div, top, left, width, height, args) {
         div.style.left = left+"px";
         div.style.top = top+"px";
         div.style.display = "block";
-        div.style.position = "absolute";
+        div.style.position = "relative";
         div.style.fontSize = gTitleSize;
         div.style.padding = "3px";
         div.style.borderRadius = "3px";
@@ -469,13 +454,13 @@ export function MaxPlot(div, top, left, width, height, args) {
        div.id = "mpProgressBars";
        div.style.top = top+"px";
        div.style.left = left+"px";
-       div.style.position = "absolute";
+       div.style.position = "relative";
 
        var htmls = [];
        for (var i=0; i<3; i++) {
            htmls.push('<div id="mpProgressDiv'+i+'" style="display:none; height:17px; width:300px; background-color: rgba(180, 180, 180, 0.3)" style="">');
            htmls.push('<div id="mpProgress'+i+'" style="background-color:#666; height:17px; width:10%"></div>');
-           htmls.push('<div id="mpProgressLabel'+i+'" style="color:white; line-height:17px; position:absolute; top:'+(i*17)+'px;left:100px">Loading...</div>');
+           htmls.push('<div id="mpProgressLabel'+i+'" style="color:white; line-height:17px; position:relative; top:'+(i*17)+'px;left:100px">Loading...</div>');
            htmls.push('</div>');
        }
 
@@ -1106,7 +1091,7 @@ export function MaxPlot(div, top, left, width, height, args) {
         //console.time("clear");
         ctx.save();
         ctx.globalAlpha = 1.0;
-        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillStyle = "rgb(255,255,255)";  // TODO: change background color
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         //console.timeEnd("clear");
@@ -1922,8 +1907,8 @@ export function MaxPlot(div, top, left, width, height, args) {
         var minX = Math.min(x1, x2);
         var minY = Math.min(y1, y2);
         var div = self.selectBox;
-        div.style.left = (minX-self.left)+"px";
-        div.style.top = (minY-self.top)+"px";
+        div.style.left = minX+"px";
+        div.style.top = minY+"px";
         div.style.width = selectWidth+"px";
         div.style.height = selectHeight+"px";
         div.style.display = "block";
