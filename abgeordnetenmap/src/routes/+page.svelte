@@ -1,5 +1,20 @@
 <script lang="ts">
-	let questions = $state(["Das ist eine Frage"]);
+	import { onMount } from 'svelte';
+
+	let questions = $state(['Some question']);
+	let blob = $state(new ArrayBuffer(0));
+
+	async function loadPreview() {
+		const response = await fetch('/data/preview_export.bin');
+		const data = await response.arrayBuffer();
+		blob = data;
+		console.log('data size:', data.byteLength);
+	}
+
+	onMount(() => {
+		console.log('loading data');
+		loadPreview();
+	});
 </script>
 
 <style>
@@ -118,6 +133,7 @@
 			<div id="map"></div>
 			<div class="question-section">
 				<h1 class="question-header">Fragen</h1>
+				loaded {blob.byteLength} bytes
 				{#if questions.length === 0}
 					Keine Fragen ausgewählt
 				{:else}
