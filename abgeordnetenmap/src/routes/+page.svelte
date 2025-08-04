@@ -10,12 +10,10 @@
 		const response = await fetch('/data/preview_export.bin');
 		const data = await response.arrayBuffer();
 		let result = await decodeArrayBuffer(data);
-		console.log('result:', result);
 		if (result !== null) {
 			createPlot(result);
 		}
 		blob = data;
-		console.log('data size:', data.byteLength);
 	}
 
 	function createPlot(preview: abgeordnetenmap.PreviewQuestionBase) {
@@ -34,16 +32,11 @@
 			fig.initPlot({'radius':3, 'alpha':0.8});
 			const coords = [];
 			const colors = [];
-			let counter = 0;
 			for (let q of preview.questions) {
 				coords.push(q.x);
 				coords.push(q.y);
-				colors.push(q.cluster_id);
-				counter++;
-				if (counter >= 50)
-					break;
+				colors.push(q.clusterId);
 			}
-			console.log(coords.length, colors.length);
 			fig.setCoords(
 				coords,
 				[],
@@ -65,22 +58,24 @@
 		initializePlot(fig);
 
 		fig.onSelChange = function(cellIds) {
-			console.log('selected:', cellIds.length);
+			// console.log('selected:', cellIds.length);
 		};
 		fig.onCellHover = function(cellIds) {
-			if (cellIds===null)
-				console.log('nothing hovered');
-			else
-				console.log('hovered:', cellIds.length);
+			if (cellIds===null) {
+				// console.log('nothing hovered');
+			} else {
+				// console.log('hovered:', cellIds.length);
+			}
 		};
 		fig.onCellClick = function(cellIds) {
-			if (cellIds===null)
-				console.log('nothing clicked');
-			else
-				console.log('clicked:', cellIds.length);
+			if (cellIds===null) {
+				// console.log('nothing clicked');
+			} else {
+				// console.log('clicked:', cellIds.length);
+			}
 		};
 		fig.onNoLabelHover = function(ev) {
-			console.log('no label hovered');
+			// console.log('no label hovered');
 		}
 	}
 
@@ -89,7 +84,6 @@
 			const buffer = new Uint8Array(arrayBuffer);
 
 			const message = abgeordnetenmap.PreviewQuestionBase.decode(buffer);
-			console.log('message:', message);
 
 			return abgeordnetenmap.PreviewQuestionBase.toObject(message);
 		} catch (e) {
@@ -105,7 +99,6 @@
 	}
 
 	onMount(() => {
-		console.log('loading data');
 		loadPreview();
 	});
 </script>
