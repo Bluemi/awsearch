@@ -353,9 +353,10 @@ export function MaxPlot(div, top, left, width, height, args) {
 		/* make a container for half-transprent ctrl buttons over the canvas */
 		var ctrlDiv = document.createElement('div');
 		ctrlDiv.id = 'mpCtrls';
-		ctrlDiv.style.position = 'relative';
+		ctrlDiv.style.position = 'absolute';
 		ctrlDiv.style.left = left + 'px';
 		ctrlDiv.style.top = top + 'px';
+		console.log(ctrlDiv.style.left, ctrlDiv.style.top);
 		ctrlDiv.style['width'] = 'max-content';
 		ctrlDiv.style['display'] = 'block-inline';
 		ctrlDiv.style['border-radius'] = '2px';
@@ -400,13 +401,15 @@ export function MaxPlot(div, top, left, width, height, args) {
 
 		var minusDiv = createButton(width, height, 'mpCtrlZoomMinus', 'Zoom out. Keyboard: -', '-');
 
-		var ctrlDiv = makeCtrlContainer(10, 10);
+		var ctrlDiv = makeCtrlContainer(self.div.clientHeight - 100, 10);
+
 		ctrlDiv.appendChild(plusDiv);
 		ctrlDiv.appendChild(fullDiv);
 		ctrlDiv.appendChild(minusDiv);
 		self.zoomDiv = ctrlDiv;
 
 		self.div.appendChild(ctrlDiv);
+		console.log(10, 10, ctrlDiv);
 
 		minusDiv.addEventListener('click', function () {
 			self.zoomBy(0.75);
@@ -447,7 +450,7 @@ export function MaxPlot(div, top, left, width, height, args) {
 
 	function addModeButtons(top, left, self) {
 		/* add the zoom/move/select control buttons to the DOM */
-		var ctrlDiv = makeCtrlContainer(self.div.clientHeight - 190, 10);
+		var ctrlDiv = makeCtrlContainer(10, 10);
 
 		var bSize = gZoomButtonSize;
 
@@ -569,6 +572,7 @@ export function MaxPlot(div, top, left, width, height, args) {
 		canv.addEventListener('dragstart', (event) => {
 			event.preventDefault();
 		});
+
 		// canv.style.width = width+"px";
 		// canv.style.height = height+"px";
 		//canv.style.top = top+"px";
@@ -590,6 +594,14 @@ export function MaxPlot(div, top, left, width, height, args) {
 		// by default, the canvas background is transparent+black
 		// we use alpha=false, so we need to initialize the canvas with white pixels
 		clearCanvas(self.ctx, width, height);
+
+		const resizeObserver = new ResizeObserver(entries => {
+			for (let entry of entries) {
+				self.setSize(entry.contentRect.width, entry.contentRect.height, true);
+			}
+		});
+		resizeObserver.observe(div);
+
 
 		return canv;
 	}
@@ -1363,8 +1375,8 @@ export function MaxPlot(div, top, left, width, height, args) {
 
 	this.quickResize = function (width, height) {
 		/* resize the canvas and move the status line, don't rescale or draw  */
-		self.div.style.width = width + 'px';
-		self.div.style.height = height + 'px';
+		// self.div.style.width = width + 'px';
+		// self.div.style.height = height + 'px';
 
 		if (self.childPlot) {
 			width = width / 2;
@@ -1388,12 +1400,10 @@ export function MaxPlot(div, top, left, width, height, args) {
 		self.canvas.height = canvHeight;
 		self.canvas.width = width;
 		self.canvas.style.height = canvHeight + 'px';
-		self.zoomDiv.style.top = height - gZoomFromBottom + 'px';
-		self.zoomDiv.style.left = gZoomFromLeft + 'px';
-
-		var statusDiv = self.statusLine;
-		statusDiv.style.top = height - gStatusHeight + 'px';
-		statusDiv.style.width = width + 'px';
+		// self.zoomDiv.style.top = height - gZoomFromBottom + 'px';
+		// self.zoomDiv.style.left = gZoomFromLeft + 'px';
+		self.zoomDiv.style.top = (self.div.clientHeight - 100) + 'px';
+		console.log(self.zoomDiv.style.top, self.zoomDiv)
 	};
 
 	this.setPos = function (top, left) {
