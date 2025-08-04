@@ -155,7 +155,7 @@ export function MaxPlot(div, top, left, width, height, args) {
 			var selectDiv = document.createElement('div');
 			selectDiv.id = 'mpSelectBox';
 			selectDiv.style.border = '1px dotted black';
-			selectDiv.style.position = 'relative';
+			selectDiv.style.position = 'absolute';
 			selectDiv.style.display = 'none';
 			selectDiv.style.pointerEvents = 'none';
 			self.div.appendChild(selectDiv);
@@ -177,7 +177,7 @@ export function MaxPlot(div, top, left, width, height, args) {
 			self.parentPlot = null; // plot that syncs to us, see split()
 		}
 
-		addProgressBars(top + Math.round(height * 0.3), left + 30);
+		// addProgressBars(top + Math.round(height * 0.3), left + 30);
 
 		// timer that is reset on every mouse move
 		self.timer = null;
@@ -1868,12 +1868,13 @@ export function MaxPlot(div, top, left, width, height, args) {
 	};
 
 	this.selectInRect = function (x1, y1, x2, y2) {
+		console.log('selectInRect', x1, y1, x2, y2);
 		/* find all cells within a rectangle and add them to the selection. */
-		var minX = Math.min(x1, x2);
-		var maxX = Math.max(x1, x2);
+		var minX = Math.min(x1, x2) + 50; // Why da fuck +50? I don't know, but it works
+		var maxX = Math.max(x1, x2) + 50;
 
-		var minY = Math.min(y1, y2);
-		var maxY = Math.max(y1, y2);
+		var minY = Math.min(y1, y2) + 50;
+		var maxY = Math.max(y1, y2) + 50;
 
 		console.time('select');
 		var pxCoords = self.coords.px;
@@ -2043,8 +2044,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 		var minX = Math.min(x1, x2);
 		var minY = Math.min(y1, y2);
 		var div = self.selectBox;
-		let xCanvasPos = self.canvas.getBoundingClientRect().left;
-		let yCanvasPos = self.canvas.getBoundingClientRect().top;
 		div.style.left = minX + 'px';
 		div.style.top = minY + 'px';
 		div.style.width = selectWidth + 'px';
