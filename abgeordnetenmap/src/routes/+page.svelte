@@ -37,9 +37,13 @@
 				coords.push(q.y);
 				colors.push(q.clusterId === undefined?0:q.clusterId);
 			}
+			const clusters = [];
+			for (let c of preview.clusters) {
+				clusters.push([c.centerX, c.centerY, c.topic])
+			}
 			fig.setCoords(
 				coords,
-				[],
+				clusters,
 				{}, {}
 			);
 			// set different colors
