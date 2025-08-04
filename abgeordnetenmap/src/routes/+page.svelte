@@ -35,7 +35,7 @@
 			for (let q of preview.questions) {
 				coords.push(q.x);
 				coords.push(q.y);
-				colors.push(q.clusterId);
+				colors.push(q.clusterId === undefined?0:q.clusterId);
 			}
 			fig.setCoords(
 				coords,
