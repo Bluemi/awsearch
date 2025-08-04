@@ -118,7 +118,7 @@
 			<div id="map"></div>
 			<div class="question-section">
 				<h1 class="question-header">Fragen</h1>
-				{#if questions.length == 0}
+				{#if questions.length === 0}
 					Keine Fragen ausgewählt
 				{:else}
 					{#each questions as question}
