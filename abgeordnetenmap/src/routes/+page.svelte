@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { abgeordnetenmap } from '$lib/questionbase/proto-bundle'
+	import { abgeordnetenmap } from '$lib/questionbase/proto-bundle';
+	import { MaxPlot } from "$lib/maxPlot"
 
 	let questions = $state(['Some question']);
 	let blob = $state(new ArrayBuffer(0));
@@ -10,11 +11,60 @@
 		const data = await response.arrayBuffer();
 		let result = await decodeArrayBuffer(data);
 		console.log('result:', result);
+		if (result !== null) {
+			createPlot(result);
+		}
 		blob = data;
 		console.log('data size:', data.byteLength);
 	}
 
-	async function decodeArrayBuffer(arrayBuffer: ArrayBuffer) {
+	function createPlot(preview: abgeordnetenmap.PreviewQuestionBase) {
+		const div = document.getElementById("map");
+		console.log('top', div.style.top)
+		let fig = new MaxPlot(div, 50, 50, 800, 400, {'radius':30, 'alpha':1.0});
+
+		fig.canvas.style.border = "1px solid black";
+
+		function fiveCircles(fig) {
+		// draw five little circles
+			fig.initPlot({'radius':30, 'alpha':0.8});
+			fig.setCoords(
+				[1,2, 2,3, 3,4, 4,5, 2.02, 3.02],
+				[[2.5,2.5, "a label"], [1.5,1.5, "the green circle covers another circle. Zoom onto it."]],
+				{}, {}
+			);
+			// set four different colors
+			fig.setColors(["000000", "ff0000", "00ff00", "0000ff"]);
+			// and assign every circle its own color
+			fig.setColorArr([0, 1, 2, 3, 2]);
+			fig.setTitle("Example plot");
+			// and draw it
+			fig.drawDots();
+		}
+
+		fiveCircles(fig);
+
+		fig.onSelChange = function(cellIds) {
+			console.log('selected:', cellIds.length);
+		};
+		fig.onCellHover = function(cellIds) {
+			if (cellIds===null)
+				console.log('nothing hovered');
+			else
+				console.log('hovered:', cellIds.length);
+		};
+		fig.onCellClick = function(cellIds) {
+			if (cellIds===null)
+				console.log('nothing clicked');
+			else
+				console.log('clicked:', cellIds.length);
+		};
+		fig.onNoLabelHover = function(ev) {
+			console.log('no label hovered');
+		}
+	}
+
+	async function decodeArrayBuffer(arrayBuffer: ArrayBuffer): abgeordnetenmap.PreviewQuestionBase | null {
 		try {
 			const buffer = new Uint8Array(arrayBuffer);
 
