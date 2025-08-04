@@ -94,7 +94,6 @@ export function MaxPlot(div, top, left, width, height, args) {
     // I use 'self' to refer to object variables, so I can use 'this' to refer to the caller context
 
     const gTextSize = 16; // size of cluster labels
-    const gTitleSize = 18; // size of title text
     const gStatusHeight = 0; // height of status bar
     const gZoomButtonSize = 30; // size of zoom buttons
     const gZoomFromLeft = 10;  // position of zoom buttons from left
@@ -130,7 +129,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 
             addZoomButtons(height-gZoomFromBottom, gZoomFromLeft, self);
             addModeButtons(10, 10, self);
-            addTitleDiv(height-gTitleSize-gStatusHeight-4, 8);
 
             /* add the div used for the mouse selection/zoom rectangle to the DOM */
             var selectDiv = document.createElement('div');
@@ -240,11 +238,6 @@ export function MaxPlot(div, top, left, width, height, args) {
        //self.div.style.left = left+"px";
        //self.div.style.top = top+"px";
     //};
-
-    this.setTitle = function (text) {
-        self.title = text;
-        self.titleDiv.innerHTML = text;
-    };
 
     // -- (private) helper functions
     // -- these are normal functions, not methods, they do not access "self"
@@ -377,17 +370,6 @@ export function MaxPlot(div, top, left, width, height, args) {
         plusDiv.addEventListener('click', function() { self.zoomBy(1.333); self.drawDots(); });
     }
 
-    function addTitleDiv(top, left) {
-        var div = document.createElement('div');
-        div.className = "tpTitle";
-        div.style.top = top+"px";
-        div.style.left = left+"px";
-        div.style.fontSize = gTitleSize;
-        div.id = 'mpTitle';
-        self.div.appendChild(div);
-        self.titleDiv = div;
-    }
-
     function addCloseButton(top, left) {
         /* add close button and sync checkbox */
         var div = document.createElement('div');
@@ -396,7 +378,6 @@ export function MaxPlot(div, top, left, width, height, args) {
         div.style.top = top+"px";
         div.style.display = "block";
         div.style.position = "relative";
-        div.style.fontSize = gTitleSize;
         div.style.padding = "3px";
         div.style.borderRadius = "3px";
         div.style.border = "1px solid #c5c5c5";
@@ -1266,8 +1247,6 @@ export function MaxPlot(div, top, left, width, height, args) {
        var statusDiv = self.statusLine;
        statusDiv.style.top = (height-gStatusHeight)+"px";
        statusDiv.style.width = width+"px";
-
-       self.titleDiv.style.top = (height-gStatusHeight-gTitleSize)+"px";
 
     }
 
