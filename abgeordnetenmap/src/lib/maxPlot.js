@@ -564,6 +564,11 @@ export function MaxPlot(div, top, left, width, height, args) {
 		canv.style.backgroundColor = 'white';
 		canv.style.position = 'absolute';
 		canv.style.display = 'block';
+		canv.draggable = false;
+		div.draggable = false;
+		canv.addEventListener('dragstart', (event) => {
+			event.preventDefault();
+		});
 		// canv.style.width = width+"px";
 		// canv.style.height = height+"px";
 		//canv.style.top = top+"px";
