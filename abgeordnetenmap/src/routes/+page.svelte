@@ -44,10 +44,15 @@
 			);
 			// set different colors
 			fig.setColors([
-				"ff0000", "ff8000", "ffff00", "80ff00", "00ff00", "00ff80", "00ffff", "0080ff", "0000ff", "8000ff", "ff00ff",
-				"ff0080", "808080", "c0c0c0", "404040", "ff6666", "66ff66", "6666ff", "ffa366", "66ffa3", "a366ff", "ffff99",
-				"99ffff", "ff99ff", "99ff99", "9999ff", "ccbbaa", "aabbcc", "bbaacc", "996633", "339966", "663399", "993366",
-				"669933", "336699"
+				"ff0000", "ff8000", "ffff00", "80ff00",
+				"00ff00", "00ff80", "00ffff", "0080ff",
+				"0000ff", "8000ff", "ff00ff", "ff0080",
+				"808080", "ffc000", "404040", "ff6666",
+				"2020f6", "6666ff", "ffa366", "66aaa3",
+				"a366ff", "ffff99", "99ffff", "ff99ff",
+				"bdaa2e", "9999ff", "ccbbaa", "aabbcc",
+				"bbaacc", "996633", "339966", "663399",
+				"993366", "669933", "336699"
 			]);
 			// and assign every circle its own color
 			fig.setColorArr(colors);
