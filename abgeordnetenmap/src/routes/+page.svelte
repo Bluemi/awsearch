@@ -29,23 +29,40 @@
 
 		fig.canvas.style.border = "1px solid black";
 
-		function fiveCircles(fig) {
+		function initializePlot(fig) {
 		// draw five little circles
-			fig.initPlot({'radius':30, 'alpha':0.8});
+			fig.initPlot({'radius':3, 'alpha':0.8});
+			const coords = [];
+			const colors = [];
+			let counter = 0;
+			for (let q of preview.questions) {
+				coords.push(q.x);
+				coords.push(q.y);
+				colors.push(q.cluster_id);
+				counter++;
+				if (counter >= 50)
+					break;
+			}
+			console.log(coords.length, colors.length);
 			fig.setCoords(
-				[1,2, 2,3, 3,4, 4,5, 2.02, 3.02],
-				[[2.5,2.5, "a label"], [1.5,1.5, "the green circle covers another circle. Zoom onto it."]],
+				coords,
+				[],
 				{}, {}
 			);
 			// set four different colors
-			fig.setColors(["000000", "ff0000", "00ff00", "0000ff"]);
+			fig.setColors([
+				"ff0000", "ff8000", "ffff00", "80ff00", "00ff00", "00ff80", "00ffff", "0080ff", "0000ff", "8000ff", "ff00ff",
+				"ff0080", "808080", "c0c0c0", "404040", "ff6666", "66ff66", "6666ff", "ffa366", "66ffa3", "a366ff", "ffff99",
+				"99ffff", "ff99ff", "99ff99", "9999ff", "ccbbaa", "aabbcc", "bbaacc", "996633", "339966", "663399", "993366",
+				"669933", "336699"
+			]);
 			// and assign every circle its own color
-			fig.setColorArr([0, 1, 2, 3, 2]);
+			fig.setColorArr(colors);
 			// and draw it
 			fig.drawDots();
 		}
 
-		fiveCircles(fig);
+		initializePlot(fig);
 
 		fig.onSelChange = function(cellIds) {
 			console.log('selected:', cellIds.length);

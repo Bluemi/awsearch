@@ -1403,8 +1403,9 @@ export function MaxPlot(div, top, left, width, height, args) {
              alert("internal error: alpha is not defined");
         if (coords===null)
              alert("internal error: cannot draw if coordinates are not set yet");
-        if (colArr.length !== (coords.length>>1))
-            alert("internal error: cbDraw.drawDots - colorArr is not 1/2 of coords array. Got "+pal.length+" color values but coordinates for "+(coords.length/2)+" cells.");
+        if (colArr.length !== (coords.length>>1)) {
+					alert("internal error: cbDraw.drawDots - colorArr is not 1/2 of coords array. Got " + colArr.length + " color values but coordinates for " + (coords.length / 2) + " cells.");
+				}
 
         drawBackground(self.ctx, self.background)
 
