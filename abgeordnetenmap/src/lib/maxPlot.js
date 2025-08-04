@@ -1993,10 +1993,10 @@ export function MaxPlot(div, top, left, width, height, args) {
 			var pxX = pxCoords[2 * i];
 			var pxY = pxCoords[2 * i + 1];
 			if (isHidden(pxX, pxY)) continue;
-			var x1 = pxX - radius;
-			var y1 = pxY - radius;
-			var x2 = pxX + radius;
-			var y2 = pxY + radius;
+			var x1 = pxX - radius - 50;
+			var y1 = pxY - radius - 50;
+			var x2 = pxX + radius - 50;
+			var y2 = pxY + radius - 50;
 			if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
 				var dist = Math.sqrt(Math.pow(x - pxX, 2) + Math.pow(y - pxY, 2));
 				possIds.push([dist, i]);
