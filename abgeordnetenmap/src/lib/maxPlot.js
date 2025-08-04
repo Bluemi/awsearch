@@ -30,6 +30,53 @@ function copyObj(src, trg) {
   }
 }
 
+
+var PIXEL_STEP  = 10;
+var LINE_HEIGHT = 40;
+var PAGE_HEIGHT = 800;
+
+function normalizeWheel(/*object*/ event) /*object*/ {
+	var sX = 0, sY = 0,       // spinX, spinY
+		pX = 0, pY = 0;       // pixelX, pixelY
+
+	// Legacy
+	if ('detail'      in event) { sY = event.detail; }
+	if ('wheelDelta'  in event) { sY = -event.wheelDelta / 120; }
+	if ('wheelDeltaY' in event) { sY = -event.wheelDeltaY / 120; }
+	if ('wheelDeltaX' in event) { sX = -event.wheelDeltaX / 120; }
+
+	// side scrolling on FF with DOMMouseScroll
+	if ( 'axis' in event && event.axis === event.HORIZONTAL_AXIS ) {
+		sX = sY;
+		sY = 0;
+	}
+
+	pX = sX * PIXEL_STEP;
+	pY = sY * PIXEL_STEP;
+
+	if ('deltaY' in event) { pY = event.deltaY; }
+	if ('deltaX' in event) { pX = event.deltaX; }
+
+	if ((pX || pY) && event.deltaMode) {
+		if (event.deltaMode == 1) {          // delta in LINE units
+			pX *= LINE_HEIGHT;
+			pY *= LINE_HEIGHT;
+		} else {                             // delta in PAGE units
+			pX *= PAGE_HEIGHT;
+			pY *= PAGE_HEIGHT;
+		}
+	}
+
+	// Fall-back if spin cannot be determined
+	if (pX && !sX) { sX = (pX < 1) ? -1 : 1; }
+	if (pY && !sY) { sY = (pY < 1) ? -1 : 1; }
+
+	return { spinX  : sX,
+		spinY  : sY,
+		pixelX : pX,
+		pixelY : pY };
+}
+
 export function MaxPlot(div, top, left, width, height, args) {
     // a class that draws circles onto a canvas, like a scatter plot
     // div is a div DOM element under which the canvas will be created
@@ -378,14 +425,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 
     function addChildControls(top, left) {
         addCloseButton(top, left);
-    }
-
-    function appendButton(parentDiv, id, title, imgName) {
-        /* add a div styled like a button under div */
-        var div = document.createElement('div');
-        div.title = title;
-        div.id = id;
-
     }
 
     function addModeButtons(top, left, self) {
@@ -2103,11 +2142,14 @@ export function MaxPlot(div, top, left, width, height, args) {
         /* called when the user moves the mouse wheel */
         if (self.parentPlot!==null)
             return;
+				var normWheel = normalizeWheel(ev);
+				var pxX = ev.clientX - self.left;
         var pxY = ev.clientY - self.top;
         var spinFact = 0.1;
         if (ev.ctrlKey) // = OSX pinch and zoom gesture (and no other OS/mouse combination?)
             spinFact = 0.08;  // is too fast, so slow it down a little
         var zoomFact = 1-(spinFact*normWheel.spinY);
+				self.zoomBy(zoomFact, pxX, pxY);
         self.drawDots();
         ev.preventDefault();
         ev.stopPropagation();
