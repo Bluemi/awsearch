@@ -30,11 +30,6 @@ function copyObj(src, trg) {
   }
 }
 
-function debug(msg) {
-    if (window.doDebug)
-        console.log(msg);
-}
-
 export function MaxPlot(div, top, left, width, height, args) {
     // a class that draws circles onto a canvas, like a scatter plot
     // div is a div DOM element under which the canvas will be created
@@ -53,7 +48,7 @@ export function MaxPlot(div, top, left, width, height, args) {
 
     const gTextSize = 16; // size of cluster labels
     const gTitleSize = 18; // size of title text
-    const gStatusHeight = 14; // height of status bar
+    const gStatusHeight = 0; // height of status bar
     const gZoomButtonSize = 30; // size of zoom buttons
     const gZoomFromLeft = 10;  // position of zoom buttons from left
     const gZoomFromBottom = 140;  // position of zoom buttons from bottom
@@ -67,10 +62,10 @@ export function MaxPlot(div, top, left, width, height, args) {
     this.initCanvas = function (div, top, left, width, height) {
         /* initialize a new Canvas */
 
-        div.style.top = top+"px";
-        div.style.left = left+"px";
-        div.style.position = "absolute";
-        div.style.display = "block";
+        // div.style.top = top+"px";
+        // div.style.left = left+"px";
+        // div.style.position = "absolute";
+        // div.style.display = "block";
         self.div = div;
 
         self.gSampleDescription = "cell";
@@ -88,7 +83,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 
             addZoomButtons(height-gZoomFromBottom, gZoomFromLeft, self);
             addModeButtons(10, 10, self);
-            addStatusLine(height-gStatusHeight, left, width, gStatusHeight);
             addTitleDiv(height-gTitleSize-gStatusHeight-4, 8);
 
             /* add the div used for the mouse selection/zoom rectangle to the DOM */
@@ -311,9 +305,11 @@ export function MaxPlot(div, top, left, width, height, args) {
         /* make a container for half-transprent ctrl buttons over the canvas */
         var ctrlDiv = document.createElement('div');
         ctrlDiv.id = "mpCtrls";
-        ctrlDiv.style.position = "absolute";
+        ctrlDiv.style.position = "relative";
         ctrlDiv.style.left = left+"px";
         ctrlDiv.style.top = top+"px";
+				ctrlDiv.style["width"] = "max-content";
+				ctrlDiv.style["display"] = "block-inline";
         ctrlDiv.style["border-radius"]="2px";
         ctrlDiv.style["cursor"]="pointer";
         ctrlDiv.style["box-shadow"]="0px 2px 4px rgba(0,0,0,0.3)";
@@ -336,7 +332,7 @@ export function MaxPlot(div, top, left, width, height, args) {
 
         var minusDiv = createButton(width, height, "mpCtrlZoomMinus", "Zoom out. Keyboard: -", "-");
 
-        var ctrlDiv = makeCtrlContainer(top, left);
+        var ctrlDiv = makeCtrlContainer(10, 10);
         ctrlDiv.appendChild(plusDiv);
         ctrlDiv.appendChild(fullDiv);
         ctrlDiv.appendChild(minusDiv);
@@ -394,17 +390,22 @@ export function MaxPlot(div, top, left, width, height, args) {
 
     function addModeButtons(top, left, self) {
         /* add the zoom/move/select control buttons to the DOM */
-        var ctrlDiv = makeCtrlContainer(top, left);
+        var ctrlDiv = makeCtrlContainer(self.div.clientHeight - 190, 10);
 
         var bSize = gZoomButtonSize;
 
-        var selectButton = createButton(bSize, bSize, "mpIconModeSelect", "Select mode. Keyboard: shift or s", null, "img/select.png", 0, 4, true, true);
+        var selectButton = createButton(bSize, bSize, "mpIconModeSelect", "Select mode. Keyboard: shift or s", null, "mpimg/select.png", 0, 4, true, true);
         selectButton.addEventListener ('click',  function() { self.activateMode("select")}, false);
 
-        var zoomButton = createButton(bSize, bSize, "mpIconModeZoom", "Zoom-to-rectangle mode. Keyboard: Windows/Command or z", null, "img/zoom.png", 4, 4, true);
+        var zoomButton = createButton(
+					bSize, bSize, "mpIconModeZoom", "Zoom-to-rectangle mode. Keyboard: Windows/Command or z", null,
+					"mpimg/zoom.png", 4, 4, true
+				);
         zoomButton.addEventListener ('click', function() { self.activateMode("zoom")}, false);
 
-        var moveButton = createButton(bSize, bSize, "mpIconModeMove", "Move mode. Keyboard: Alt or m", null, "img/move.png", 4, 4);
+        var moveButton = createButton(
+					bSize, bSize, "mpIconModeMove", "Move mode. Keyboard: Alt or m", null, "mpimg/move.png", 4, 4
+				);
         moveButton.addEventListener('click', function() { self.activateMode("move");}, false);
 
         self.icons = {};
@@ -421,30 +422,6 @@ export function MaxPlot(div, top, left, width, height, args) {
         self.toolDiv = ctrlDiv;
 
         activateTooltip('.mpIconButton');
-    }
-
-    function setStatus(text) {
-        self.statusLine.innerHTML = text;
-    }
-
-    function addStatusLine(top, left, width, height) {
-        /* add a status line div */
-        var div = document.createElement('div');
-        div.id = "mpStatus";
-        div.style.backgroundColor = "rgb(240, 240, 240)";
-        div.style.position = "absolute";
-        div.style.top = top+"px";
-        //div.style.left = left+"px";
-        div.style.width = width+"px";
-        div.style.height = height+"px";
-        div.style["border-left"]="1px solid #DDD";
-        div.style["border-right"]="1px solid #DDD";
-        div.style["border-top"]="1px solid #DDD";
-        div.style["font-size"]=(gStatusHeight-1)+"px";
-        div.style["cursor"]="pointer";
-        div.style["font-family"] = "sans-serif";
-        self.div.appendChild(div);
-        self.statusLine = div;
     }
 
     function addProgressBars(top, left) {
@@ -475,8 +452,8 @@ export function MaxPlot(div, top, left, width, height, args) {
         canv.style.backgroundColor = "white";
         canv.style.position = "absolute";
         canv.style.display = "block";
-        canv.style.width = width+"px";
-        canv.style.height = height+"px";
+        // canv.style.width = width+"px";
+        // canv.style.height = height+"px";
         //canv.style.top = top+"px";
         //canv.style.left = left+"px";
         // No scaling = one unit on screen is one pixel. Essential for speed.
@@ -639,7 +616,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 
     function drawRect(ctx, pxCoords, coordColors, colors, radius, alpha, selCells) {
         /* draw not circles but tiny rectangles. Maybe good enough for 2pixels sizes */
-       debug("Drawing "+coordColors.length+" rectangles, with fillRect");
        ctx.save();
        ctx.globalAlpha = alpha;
        var dblSize = 2*radius;
@@ -664,14 +640,12 @@ export function MaxPlot(div, top, left, width, height, args) {
            ctx.fillRect(pxX-radius, pxY-radius, dblSize, dblSize);
            count += 1;
         })
-       debug(count+" rectangles drawn (including selection)");
        ctx.restore();
        return count;
     }
 
     function drawCirclesStupid(ctx, pxCoords, coordColors, colors, radius, alpha, selCells) {
     /* draw little circles onto canvas. pxCoords are the centers.  */
-       debug("Drawing "+coordColors.length+" circles with stupid renderer");
        ctx.globalAlpha = alpha;
        var dblSize = 2*radius;
        var count = 0;
@@ -852,7 +826,6 @@ export function MaxPlot(div, top, left, width, height, args) {
        // create an off-screen canvas
 
        ctx.save();
-       debug("Drawing "+coordColors.length+" coords with drawImg renderer, radius="+radius);
        var off = document.createElement('canvas'); // not added to DOM, will be gc'ed
        var diam = Math.round(2 * radius);
        var tileWidth = diam + 2; // must add one pixel on each side, space for antialising
@@ -924,7 +897,6 @@ export function MaxPlot(div, top, left, width, height, args) {
            ctx.drawImage(off, selImgId * tileWidth, 0, tileWidth, tileHeight, pxX - radius -1, pxY - radius-1, tileWidth, tileHeight);
         })
 
-       debug(count +" circles drawn");
        ctx.restore();
        return count;
     }
@@ -1360,8 +1332,6 @@ export function MaxPlot(div, top, left, width, height, args) {
                count++;
        }
 
-       setStatus(count+ " visible " + self.gSampleDescription+"s loaded");
-
        if (opts.lines)
            self._setLines(opts["lines"], opts);
        self.scaleData();
@@ -1404,7 +1374,6 @@ export function MaxPlot(div, top, left, width, height, args) {
         var zoomFrac = Math.min(1.0, zoomFact/100.0); // zoom as fraction, max is 1.0
         var alpha = initAlpha + 3.0*zoomFrac*(1.0 - initAlpha);
         alpha = Math.min(0.8, alpha);
-        debug("Zoom factor: ", zoomFact, ", Radius: "+radius+", alpha: "+alpha);
 
         self.port.zoomFact = zoomFact;
         self.port.alpha = alpha;
@@ -1527,7 +1496,6 @@ export function MaxPlot(div, top, left, width, height, args) {
     this.zoomTo = function(x1, y1, x2, y2) {
        /* zoom to rectangle defined by two points */
        // make sure that x1<x2 and y1<y2 - can happen if mouse movement was upwards
-       debug("Zooming to pixels: ", x1, y1, x2, y2);
        var pxMinX = Math.min(x1, x2);
        var pxMaxX = Math.max(x1, x2);
 
@@ -1553,7 +1521,6 @@ export function MaxPlot(div, top, left, width, height, args) {
        zoomRange.maxY = oldMinY + (pxMaxY * yMult);
 
        self.port.zoomRange = zoomRange;
-       debug("Marquee zoom window: "+JSON.stringify(self.port.zoomRange));
 
        self.scaleData();
     };
@@ -1565,8 +1532,6 @@ export function MaxPlot(div, top, left, width, height, args) {
      * */
         var zr = self.port.zoomRange;
         var iz = self.port.initZoom;
-
-        debug("old zoomfact "+self.port.zoomFact);
 
         var xRange = Math.abs(zr.maxX-zr.minX);
         var yRange = Math.abs(zr.maxY-zr.minY);
@@ -1592,9 +1557,6 @@ export function MaxPlot(div, top, left, width, height, args) {
         var newZoom = ((iz.maxX-iz.minX)/(newRange.maxX-newRange.minX));
         if (newZoom < 0.01 || newZoom > 1500)
             return zr;
-
-        debug("x min max "+zr.minX+" "+zr.maxX);
-        debug("y min max "+zr.minY+" "+zr.maxY);
 
         self.port.zoomRange = newRange;
 
@@ -1638,7 +1600,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 
     this.panBy = function(xDiff, yDiff) {
         /* pan current image by x/y pixels */
-        debug('panning by '+xDiff+' '+yDiff);
 
        //var srcCtx = self.panCopy.getContext("2d", { alpha: false });
        clearCanvas(self.ctx, self.canvas.width, self.canvas.height);
@@ -1661,7 +1622,6 @@ export function MaxPlot(div, top, left, width, height, args) {
     this.selectClear = function(skipNotify) {
         /* clear selection */
         self.selCells.clear();
-        setStatus("");
         if (self.onSelChange!==null && skipNotify!==true)
             self.onSelChange(self.selCells);
     };
@@ -1725,7 +1685,6 @@ export function MaxPlot(div, top, left, width, height, args) {
             }
         }
         self.selCells = selCells;
-        debug(cnt + " cells appended to selection, by color");
         self._selUpdate();
     };
 
@@ -1742,7 +1701,6 @@ export function MaxPlot(div, top, left, width, height, args) {
         }
 
         self.selCells = selCells;
-        debug(cnt + " cells removed from selection, by color");
         self._selUpdate();
     };
 
@@ -1801,7 +1759,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 
     this._selUpdate = function() {
         /* called after the selection has been updated, calls the onSelChange callback */
-        setStatus(self.selCells.size + " " + self.gSampleDescription + "s selected");
         if (self.onSelChange!==null)
             self.onSelChange(self.selCells);
     }
@@ -2028,11 +1985,9 @@ export function MaxPlot(div, top, left, width, height, args) {
     /* user clicks onto canvas */
        if (self.activatePlot())
            return; // ignore the first click into the plot, if it was the activating click
-       debug("background mouse down");
        var clientX = ev.clientX;
        var clientY = ev.clientY;
        if ((ev.altKey || self.dragMode==="move") && !ev.shiftKey && !ev.metaKey) {
-           debug("alt key or move mode: starting panning");
            self.panStart();
        }
        self.mouseDownX = clientX;
@@ -2040,14 +1995,12 @@ export function MaxPlot(div, top, left, width, height, args) {
     };
 
     this.onMouseUp = function(ev) {
-       debug("background mouse up");
        // these are screen coordinates
        var clientX = ev.clientX;
        var clientY = ev.clientY;
        var mouseDidNotMove = (self.mouseDownX === clientX && self.mouseDownY === clientY);
 
        if (self.panCopy!==null && !mouseDidNotMove) {
-           debug("ending panning operation");
            self.panEnd();
            self.mouseDownX = null;
            self.mouseDownY = null;
@@ -2060,7 +2013,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 
        if (self.mouseDownX === null && self.lastPanX === null)  {
            // user started the click outside of the canvas: do nothing
-           debug("first click must have been outside of canvas");
            return;
        }
 
@@ -2100,7 +2052,6 @@ export function MaxPlot(div, top, left, width, height, args) {
                 else {
                 // user clicked onto background:
                 // reset selection and redraw
-                    debug("not moved at all: reset "+clientX+" "+self.mouseDownX+" "+self.mouseDownY+" "+clientY);
                     self.selectClear();
 
                     self.drawDots();
@@ -2113,7 +2064,6 @@ export function MaxPlot(div, top, left, width, height, args) {
             self.mouseDownY = null;
             return;
        }
-       //debug("moved: reset "+x+" "+mouseDownX+" "+mouseDownY+" "+y);
 
        // it wasn't a click, so it was a drag
        var anyKey = (ev.metaKey || ev.altKey || ev.shiftKey);
@@ -2143,9 +2093,6 @@ export function MaxPlot(div, top, left, width, height, args) {
                self.selectClear(true);
            self.selectInRect(x1, y1, x2, y2);
        }
-       else {
-           debug("Internal error: no mode?");
-       }
 
        self.resetMarquee();
 
@@ -2156,17 +2103,11 @@ export function MaxPlot(div, top, left, width, height, args) {
         /* called when the user moves the mouse wheel */
         if (self.parentPlot!==null)
             return;
-        debug(ev);
-        var normWheel = normalizeWheel(ev);
-        debug(normWheel);
-        var pxX = ev.clientX - self.left;
         var pxY = ev.clientY - self.top;
         var spinFact = 0.1;
         if (ev.ctrlKey) // = OSX pinch and zoom gesture (and no other OS/mouse combination?)
             spinFact = 0.08;  // is too fast, so slow it down a little
         var zoomFact = 1-(spinFact*normWheel.spinY);
-        debug("Wheel Zoom by "+zoomFact);
-        self.zoomBy(zoomFact, pxX, pxY);
         self.drawDots();
         ev.preventDefault();
         ev.stopPropagation();
@@ -2200,7 +2141,6 @@ export function MaxPlot(div, top, left, width, height, args) {
     this.setLabels = function(newLabels) {
         /* set new label text */
         if (newLabels.length!==self.coords.labels.length) {
-            debug("maxPlot:setLabels error: new labels have wrong length.");
             return;
         }
 

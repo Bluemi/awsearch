@@ -20,8 +20,12 @@
 
 	function createPlot(preview: abgeordnetenmap.PreviewQuestionBase) {
 		const div = document.getElementById("map");
-		console.log('top', div.style.top)
-		let fig = new MaxPlot(div, 50, 50, 800, 400, {'radius':30, 'alpha':1.0});
+
+		if (div === null) {
+			return
+		}
+		
+		let fig = new MaxPlot(div, 50, 50, div.clientWidth, div.clientHeight, {'radius':30, 'alpha':1.0});
 
 		fig.canvas.style.border = "1px solid black";
 
