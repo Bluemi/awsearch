@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { abgeordnetenmap } from '$lib/questionbase/proto-bundle'
 
 	let questions = $state(['Some question']);
 	let blob = $state(new ArrayBuffer(0));
@@ -7,8 +8,30 @@
 	async function loadPreview() {
 		const response = await fetch('/data/preview_export.bin');
 		const data = await response.arrayBuffer();
+		let result = await decodeArrayBuffer(data);
+		console.log('result:', result);
 		blob = data;
 		console.log('data size:', data.byteLength);
+	}
+
+	async function decodeArrayBuffer(arrayBuffer: ArrayBuffer) {
+		try {
+			const buffer = new Uint8Array(arrayBuffer);
+
+			const message = abgeordnetenmap.PreviewQuestionBase.decode(buffer);
+			console.log('message:', message);
+
+			return abgeordnetenmap.PreviewQuestionBase.toObject(message);
+		} catch (e) {
+			let error = '';
+			if (e instanceof Error) {
+				error = `Error decoding Protobuf message: ${e.message}`;
+			} else {
+				error = `An unknown error occurred during decoding.`;
+			}
+			console.error(error);
+		}
+		return null;
 	}
 
 	onMount(() => {
