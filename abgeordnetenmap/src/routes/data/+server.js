@@ -9,7 +9,7 @@ export async function GET() {
 		return new Response(fileData, {
 			headers: {
 				'Content-Type': 'application/octet-stream',
-				'Content-Disposition': 'attachment; filename="yourfile.bin"',
+				'Content-Disposition': 'attachment; filename="preview.bin"',
 			},
 		});
 	} catch (e) {
