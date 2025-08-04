@@ -1963,16 +1963,10 @@ export function MaxPlot(div, top, left, width, height, args) {
             clearTimeout(self.timer);
         self.timer = setTimeout(self.onNoMouseMove, 130);
         // save mouse pos for onNoMouseMove timer handler
-        self.lastMouseX = ev.clientX;
-        self.lastMouseY = ev.clientY;
-
-        // label hit check requires canvas coordinates x/y
-        var clientX = ev.clientX;
-        var clientY = ev.clientY;
-        var canvasTop = self.top;
-        var canvasLeft = self.left;
-        var xCanvas = clientX - canvasLeft;
-        var yCanvas = clientY - canvasTop;
+			  let xCanvas = ev.clientX - self.canvas.getBoundingClientRect().left;
+			  let yCanvas = ev.clientY - self.canvas.getBoundingClientRect().top;
+        self.lastMouseX = xCanvas;
+        self.lastMouseY = yCanvas;
 
         // when the cursor is over a label, change it to a hand, but only when there is no marquee
         if (self.coords.labelBbox!==null && self.mouseDownX === null) {
@@ -1990,8 +1984,8 @@ export function MaxPlot(div, top, left, width, height, args) {
         if (self.mouseDownX!==null) {
             // we're panning
             if (((ev.altKey || self.dragMode==="move")) && self.panCopy!==null) {
-                var xDiff = self.mouseDownX - clientX;
-                var yDiff = self.mouseDownY - clientY;
+                var xDiff = self.mouseDownX - xCanvas;
+                var yDiff = self.mouseDownY - yCanvas;
                 self.panBy(xDiff, yDiff);
             }
             else  {
@@ -2000,7 +1994,7 @@ export function MaxPlot(div, top, left, width, height, args) {
                var anyKey = (ev.metaKey || ev.altKey || ev.shiftKey);
                if ((self.dragMode==="zoom" && !anyKey) || ev.metaKey )
                    forceAspect = true;
-               self.drawMarquee(self.mouseDownX, self.mouseDownY, clientX, clientY, forceAspect);
+               self.drawMarquee(self.mouseDownX, self.mouseDownY, xCanvas, yCanvas, forceAspect);
             }
         }
     };
@@ -2024,20 +2018,20 @@ export function MaxPlot(div, top, left, width, height, args) {
     /* user clicks onto canvas */
        if (self.activatePlot())
            return; // ignore the first click into the plot, if it was the activating click
-       var clientX = ev.clientX;
-       var clientY = ev.clientY;
+			 let xCanvas = ev.clientX - self.canvas.getBoundingClientRect().left;
+			 let yCanvas = ev.clientY - self.canvas.getBoundingClientRect().top;
        if ((ev.altKey || self.dragMode==="move") && !ev.shiftKey && !ev.metaKey) {
            self.panStart();
        }
-       self.mouseDownX = clientX;
-       self.mouseDownY = clientY;
+       self.mouseDownX = xCanvas;
+       self.mouseDownY = yCanvas;
     };
 
     this.onMouseUp = function(ev) {
        // these are screen coordinates
-       var clientX = ev.clientX;
-       var clientY = ev.clientY;
-       var mouseDidNotMove = (self.mouseDownX === clientX && self.mouseDownY === clientY);
+			 let xCanvas = ev.clientX - self.canvas.getBoundingClientRect().left;
+			 let yCanvas = ev.clientY - self.canvas.getBoundingClientRect().top;
+       var mouseDidNotMove = (self.mouseDownX === xCanvas && self.mouseDownY === yCanvas);
 
        if (self.panCopy!==null && !mouseDidNotMove) {
            self.panEnd();
@@ -2060,8 +2054,8 @@ export function MaxPlot(div, top, left, width, height, args) {
        var canvasLeft = self.left;
        var x1 = self.mouseDownX - canvasLeft;
        var y1 = self.mouseDownY - canvasTop;
-       var x2 = clientX - canvasLeft;
-       var y2 = clientY - canvasTop;
+       var x2 = xCanvas - canvasLeft;
+       var y2 = yCanvas - canvasTop;
 
        // user did not move the mouse, so this is a click
        if (mouseDidNotMove) {
@@ -2143,13 +2137,13 @@ export function MaxPlot(div, top, left, width, height, args) {
         if (self.parentPlot!==null)
             return;
 				var normWheel = normalizeWheel(ev);
-				var pxX = ev.clientX - self.left;
-        var pxY = ev.clientY - self.top;
+				let xCanvas = ev.clientX - self.canvas.getBoundingClientRect().left;
+				let yCanvas = ev.clientY - self.canvas.getBoundingClientRect().top;
         var spinFact = 0.1;
         if (ev.ctrlKey) // = OSX pinch and zoom gesture (and no other OS/mouse combination?)
             spinFact = 0.08;  // is too fast, so slow it down a little
         var zoomFact = 1-(spinFact*normWheel.spinY);
-				self.zoomBy(zoomFact, pxX, pxY);
+				self.zoomBy(zoomFact, xCanvas, yCanvas);
         self.drawDots();
         ev.preventDefault();
         ev.stopPropagation();
