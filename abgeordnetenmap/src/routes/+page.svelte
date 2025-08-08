@@ -3,20 +3,20 @@
 	import { abgeordnetenmap } from '$lib/questionbase/proto-bundle';
 	import { MaxPlot } from "$lib/maxPlot"
 
-	let questions = $state(['Some question']);
+	let questions = $state([]);
 	let blob = $state(new ArrayBuffer(0));
 
 	async function loadPreview() {
-		const response = await fetch('/data/preview_export.bin');
+		const response = await fetch('/data');
 		const data = await response.arrayBuffer();
 		let result = await decodeArrayBuffer(data);
 		if (result !== null) {
-			createPlot(result);
+			await createPlot(result);
 		}
 		blob = data;
 	}
 
-	function createPlot(preview: abgeordnetenmap.PreviewQuestionBase) {
+	async function createPlot(preview: abgeordnetenmap.PreviewQuestionBase) {
 		const div = document.getElementById("map");
 
 		if (div === null) {
@@ -76,11 +76,19 @@
 				// console.log('hovered:', cellIds.length);
 			}
 		};
-		fig.onCellClick = function(cellIds) {
+		fig.onCellClick = async function(cellIds) {
 			if (cellIds===null) {
 				// console.log('nothing clicked');
 			} else {
-				// console.log('clicked:', cellIds.length);
+				console.log('clicked:', cellIds.length);
+				const response = await fetch('/questions', {
+					method: 'POST',
+					body: JSON.stringify(cellIds),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+				questions = await response.json();
 			}
 		};
 		fig.onNoLabelHover = function(ev) {
@@ -228,12 +236,11 @@
 			<div id="map"></div>
 			<div class="question-section">
 				<h1 class="question-header">Fragen</h1>
-				loaded {blob.byteLength} bytes
 				{#if questions.length === 0}
 					Keine Fragen ausgewählt
 				{:else}
 					{#each questions as question}
-						<div class="question">{question}</div>
+						<div class="question">{question.question}</div>
 					{/each}
 				{/if}
 			</div>

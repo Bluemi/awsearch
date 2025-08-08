@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import fs from 'fs/promises';
 
 export async function GET() {
-	const filePath = './data/preview_export.bin';  // Replace with the actual path to your file
+	const filePath = './data/preview_export.bin';
 	try {
 		const fileData = await fs.readFile(filePath);
 
@@ -13,6 +13,6 @@ export async function GET() {
 			},
 		});
 	} catch (e) {
-		throw error(404, 'Error reading file: ' + e.message);
+		throw error(500, 'Error reading file: ' + e.message);
 	}
 }
