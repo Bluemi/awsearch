@@ -356,7 +356,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 		ctrlDiv.style.position = 'absolute';
 		ctrlDiv.style.left = left + 'px';
 		ctrlDiv.style.top = top + 'px';
-		console.log(ctrlDiv.style.left, ctrlDiv.style.top);
 		ctrlDiv.style['width'] = 'max-content';
 		ctrlDiv.style['display'] = 'block-inline';
 		ctrlDiv.style['border-radius'] = '2px';
@@ -409,7 +408,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 		self.zoomDiv = ctrlDiv;
 
 		self.div.appendChild(ctrlDiv);
-		console.log(10, 10, ctrlDiv);
 
 		minusDiv.addEventListener('click', function () {
 			self.zoomBy(0.75);
@@ -1403,7 +1401,6 @@ export function MaxPlot(div, top, left, width, height, args) {
 		// self.zoomDiv.style.top = height - gZoomFromBottom + 'px';
 		// self.zoomDiv.style.left = gZoomFromLeft + 'px';
 		self.zoomDiv.style.top = (self.div.clientHeight - 100) + 'px';
-		console.log(self.zoomDiv.style.top, self.zoomDiv)
 	};
 
 	this.setPos = function (top, left) {
