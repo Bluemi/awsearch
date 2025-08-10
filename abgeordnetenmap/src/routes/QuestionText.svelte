@@ -1,4 +1,5 @@
 <script>
+	import '@fortawesome/fontawesome-free/css/all.min.css';
 	let { question, url, question_date, questioner, politician, subject_area, answer, answer_date } = $props();
 	
 </script>
