@@ -4,10 +4,11 @@
 	
 </script>
 
-<h2>Frage {#if questioner !== null}von {questioner}{/if} an <a href="{politician_url}" target="_blank">{politician}</a></h2>
 <div class="question-container">
+	<div class="section-header">
+		Frage {#if questioner !== null}von {questioner}{/if} an <a href="{politician_url}" target="_blank">{politician}</a>
+	</div>
 	<div class="stat-container">
-		<div class="section-header">Frage</div>
 		<div class="date">{question_date}</div>
 		<a href={url} target="_blank" rel="noopener noreferrer" aria-label="Link zur Frage">
 			<i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -20,8 +21,8 @@
 	<hr>
 	<div class="answer-container">
 		{#if answer !== null}
+			<div class="section-header">Antwort</div>
 			<div class="stat-container">
-				<div class="section-header">Antwort</div>
 				<div class="date">{answer_date}</div>
 			</div>
 			<p class="text">{answer}</p>
@@ -73,6 +74,7 @@
 				align-items: center;
 				gap: 0.5rem;
 				margin-bottom: 1rem;
+				margin-top: 0.5rem;
     }
 
     hr {
@@ -80,4 +82,8 @@
         border-top: 1px solid #ccc;
         margin: 1rem 0;
     }
+
+		a {
+				color: #333;
+		}
 </style>

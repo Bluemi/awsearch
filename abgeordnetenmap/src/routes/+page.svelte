@@ -5,7 +5,7 @@
 	import { MaxPlot } from "$lib/maxPlot"
 
 	let questions = $state([]);
-	let blob = $state(new ArrayBuffer(0));
+	let questionsLimited = $state(false);
 
 	async function loadPreview() {
 		const response = await fetch('/data');
@@ -14,7 +14,6 @@
 		if (result !== null) {
 			await createPlot(result);
 		}
-		blob = data;
 	}
 
 	async function createPlot(preview: abgeordnetenmap.PreviewQuestionBase) {
@@ -71,7 +70,12 @@
 			let cells = [...cellIds];
 			if (cells===null || cells.length === 0) {
 				questions = [];
+				questionsLimited = false;
 			} else {
+				questionsLimited = cells.length > 10;
+				if (questionsLimited) {
+					cells = cells.slice(0, 10);
+				}
 				const response = await fetch('/questions', {
 					method: 'POST',
 					body: JSON.stringify(cells),
@@ -239,6 +243,9 @@
 						<!-- <div class="question">{question.question}</div> -->
 						<QuestionText {...question}></QuestionText>
 					{/each}
+					{#if questionsLimited}
+						<div class="question">... und mehr</div>
+					{/if}
 				{/if}
 			</div>
 		</section>
