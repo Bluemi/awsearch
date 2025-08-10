@@ -17,21 +17,22 @@
 	{#if subject_area !== null}
 		<div class="subject">Thema: {subject_area}</div>
 	{/if}
-</div>
-<div class="answer-container">
-	{#if answer !== null}
-		<div class="stat-container">
-			<div class="section-header">Antwort</div>
-			<div class="date">{answer_date}</div>
-		</div>
-		<p class="text">{answer}</p>
-	{:else}
-		<p class="no-answer">Keine Antwort</p>
-	{/if}
+	<hr>
+	<div class="answer-container">
+		{#if answer !== null}
+			<div class="stat-container">
+				<div class="section-header">Antwort</div>
+				<div class="date">{answer_date}</div>
+			</div>
+			<p class="text">{answer}</p>
+		{:else}
+			<p class="no-answer">Keine Antwort</p>
+		{/if}
+	</div>
 </div>
 
 <style>
-    .question-container, .answer-container {
+    .question-container {
         margin: 1rem 0;
         padding: 1.5rem;
         border-radius: 8px;
@@ -67,14 +68,16 @@
         margin: 0;
     }
 
-    .answer-container {
-        background-color: #e8f4f8;
-    }
-
 		.stat-container {
         display: flex;
 				align-items: center;
 				gap: 0.5rem;
 				margin-bottom: 1rem;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #ccc;
+        margin: 1rem 0;
     }
 </style>
