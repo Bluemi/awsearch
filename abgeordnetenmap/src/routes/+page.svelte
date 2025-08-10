@@ -1,4 +1,5 @@
 <script lang="ts">
+	import QuestionText from './QuestionText.svelte'
 	import { onMount } from 'svelte';
 	import { abgeordnetenmap } from '$lib/questionbase/proto-bundle';
 	import { MaxPlot } from "$lib/maxPlot"
@@ -89,6 +90,7 @@
 					}
 				});
 				questions = await response.json();
+				console.log(questions)
 			}
 		};
 		fig.onNoLabelHover = function(ev) {
@@ -240,7 +242,8 @@
 					Keine Fragen ausgewählt
 				{:else}
 					{#each questions as question}
-						<div class="question">{question.question}</div>
+						<!-- <div class="question">{question.question}</div> -->
+						<QuestionText {...question}></QuestionText>
 					{/each}
 				{/if}
 			</div>
