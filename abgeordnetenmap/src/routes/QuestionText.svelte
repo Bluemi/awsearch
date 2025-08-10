@@ -1,7 +1,6 @@
 <script>
 	import '@fortawesome/fontawesome-free/css/all.min.css';
 	let { question, url, question_date, questioner, politician, politician_url, subject_area, answer, answer_date } = $props();
-	
 </script>
 
 <div class="question-container">
@@ -34,7 +33,7 @@
 
 <style>
     .question-container {
-        margin: 1rem 0;
+        margin: 1rem 1rem;
         padding: 1.5rem;
         border-radius: 8px;
         background-color: #f5f5f5;

@@ -1,8 +1,9 @@
 <script lang="ts">
-	import QuestionText from './QuestionText.svelte'
+	import QuestionText from './QuestionText.svelte';
+	import InfoBlock from './InfoBlock.svelte';
 	import { onMount } from 'svelte';
 	import { abgeordnetenmap } from '$lib/questionbase/proto-bundle';
-	import { MaxPlot } from "$lib/maxPlot"
+	import { MaxPlot } from "$lib/maxPlot";
 
 	let questions = $state([]);
 	let questionsLimited = $state(false);
@@ -67,8 +68,9 @@
 		initializePlot(fig);
 
 		async function updateQuestions(cellIds) {
+			const scrollElement = document.querySelector('.question-section') as HTMLElement | null;
 			let cells = [...cellIds];
-			if (cells===null || cells.length === 0) {
+			if (cells === null || cells.length === 0) {
 				questions = [];
 				questionsLimited = false;
 			} else {
@@ -84,6 +86,9 @@
 					}
 				});
 				questions = await response.json();
+				if (scrollElement) {
+					scrollElement.scrollTop = 0;
+				}
 			}
 		}
 
@@ -201,15 +206,21 @@
 				height: clamp(400px, 60vw, 100vh - 200px);
 				width: 60%;
 				background-color: #babdbe;
-		}
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
 		.question-section {
 				width: 45%;
-		}
-
-		.question-header {
-				margin-top: 0;
-		}
+        max-height: clamp(400px, 60vw, 100vh - 200px);
+        overflow-y: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /*background: linear-gradient(to bottom, #f8f9fa, #ffffff);*/
+        background-color: #e4e7e8;
+        padding: 0;
+				margin: 0;
+    }
 </style>
 
 <main>
@@ -237,14 +248,15 @@
 			<div id="map"></div>
 			<div class="question-section">
 				{#if questions.length === 0}
-					Keine Fragen ausgewählt
+					<InfoBlock text="Klicke links in die Grafik, um Fragen anzuzeigen!"></InfoBlock>
+
 				{:else}
 					{#each questions as question}
 						<!-- <div class="question">{question.question}</div> -->
 						<QuestionText {...question}></QuestionText>
 					{/each}
 					{#if questionsLimited}
-						<div class="question">... und mehr</div>
+						<InfoBlock text="... und mehr"></InfoBlock>
 					{/if}
 				{/if}
 			</div>
