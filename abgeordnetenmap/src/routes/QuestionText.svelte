@@ -1,17 +1,18 @@
 <script>
 	import '@fortawesome/fontawesome-free/css/all.min.css';
-	let { question, url, question_date, questioner, politician, subject_area, answer, answer_date } = $props();
+	let { question, url, question_date, questioner, politician, politician_url, subject_area, answer, answer_date } = $props();
 	
 </script>
 
-<h2>Frage {#if questioner !== null}von {questioner}{/if} an {politician}</h2>
-<a href={url} target="_blank" rel="noopener noreferrer" aria-label="Link zur Frage">
-	<i class="fa-solid fa-link"></i>
-</a>
-
+<h2>Frage {#if questioner !== null}von {questioner}{/if} an <a href="{politician_url}" target="_blank">{politician}</a></h2>
 <div class="question-container">
-	<div class="section-header">Frage</div>
-	<div class="date">{question_date}</div>
+	<div class="stat-container">
+		<div class="section-header">Frage</div>
+		<div class="date">{question_date}</div>
+		<a href={url} target="_blank" rel="noopener noreferrer" aria-label="Link zur Frage">
+			<i class="fa-solid fa-arrow-up-right-from-square"></i>
+		</a>
+	</div>
 	<p class="text">{question}</p>
 	{#if subject_area !== null}
 		<div class="subject">Thema: {subject_area}</div>
@@ -19,8 +20,10 @@
 </div>
 <div class="answer-container">
 	{#if answer !== null}
-		<div class="section-header">Antwort</div>
-		<div class="date">{answer_date}</div>
+		<div class="stat-container">
+			<div class="section-header">Antwort</div>
+			<div class="date">{answer_date}</div>
+		</div>
 		<p class="text">{answer}</p>
 	{:else}
 		<p class="no-answer">Keine Antwort</p>
@@ -39,13 +42,11 @@
         font-size: 1.25rem;
         font-weight: bold;
         color: #333;
-        margin-bottom: 0.5rem;
     }
 
     .date {
         font-size: 0.9rem;
         color: #666;
-        margin-bottom: 1rem;
     }
 
     .text {
@@ -68,5 +69,12 @@
 
     .answer-container {
         background-color: #e8f4f8;
+    }
+
+		.stat-container {
+        display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				margin-bottom: 1rem;
     }
 </style>

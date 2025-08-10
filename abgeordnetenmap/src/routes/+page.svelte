@@ -67,35 +67,30 @@
 
 		initializePlot(fig);
 
-		fig.onSelChange = function(cellIds) {
-			// console.log('selected:', cellIds.length);
-		};
-		fig.onCellHover = function(cellIds) {
-			if (cellIds===null) {
-				// console.log('nothing hovered');
+		async function updateQuestions(cellIds) {
+			let cells = [...cellIds];
+			if (cells===null || cells.length === 0) {
+				questions = [];
 			} else {
-				// console.log('hovered:', cellIds.length);
-			}
-		};
-		fig.onCellClick = async function(cellIds) {
-			if (cellIds===null) {
-				// console.log('nothing clicked');
-			} else {
-				console.log('clicked:', cellIds.length);
 				const response = await fetch('/questions', {
 					method: 'POST',
-					body: JSON.stringify(cellIds),
+					body: JSON.stringify(cells),
 					headers: {
 						'Content-Type': 'application/json'
 					}
 				});
 				questions = await response.json();
-				console.log(questions)
 			}
-		};
-		fig.onNoLabelHover = function(ev) {
-			// console.log('no label hovered');
 		}
+
+		fig.onSelChange = async function(cellIds) {
+			await updateQuestions(cellIds);
+		};
+		fig.onCellHover = function(cellIds) {};
+		fig.onCellClick = async function(cellIds) {
+			await updateQuestions(cellIds);
+		};
+		fig.onNoLabelHover = function(ev) {};
 	}
 
 	async function decodeArrayBuffer(arrayBuffer: ArrayBuffer): abgeordnetenmap.PreviewQuestionBase | null {
@@ -237,7 +232,6 @@
 		<section class="map-section">
 			<div id="map"></div>
 			<div class="question-section">
-				<h1 class="question-header">Fragen</h1>
 				{#if questions.length === 0}
 					Keine Fragen ausgewählt
 				{:else}
