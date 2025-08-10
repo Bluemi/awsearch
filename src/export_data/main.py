@@ -58,7 +58,9 @@ def main():
 
     questions = []
     # export questions
-    for index, (pos, url, cluster_id) in enumerate(zip(embeddings_2d, urls, cluster_ids)):
+    for index, (pos, url, cluster_id) in tqdm(
+            enumerate(zip(embeddings_2d, urls, cluster_ids)), desc='export', total=len(urls)
+    ):
         # preview questions
         preview_question = questionbase_pb2.PreviewQuestion()
         preview_question.x = float(pos[0])
@@ -71,7 +73,10 @@ def main():
         question_text = qa.question or ''
         extra_info = parse_question_string(question_text, politician.get_full_name())
         if qa.question_addition:
-            question_text = question_text + '\n' + qa.question_addition
+            if extra_info is None:
+                question_text = question_text + '\n' + qa.question_addition
+            else:
+                question_text = qa.question_addition
 
         answer_text = None
         answer_date = None
