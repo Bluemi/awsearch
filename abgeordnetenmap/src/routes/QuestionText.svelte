@@ -5,7 +5,7 @@
 </script>
 
 <h2>Frage {#if questioner !== null}von {questioner}{/if} an {politician}</h2>
-<a href={url} target="_blank" rel="noopener noreferrer">
+<a href={url} target="_blank" rel="noopener noreferrer" aria-label="Link zur Frage">
 	<i class="fa-solid fa-link"></i>
 </a>
 
