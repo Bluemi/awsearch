@@ -19,8 +19,9 @@ class CompleteQuestion(BaseModel):
     url: str
     question: str
     question_date: str
+    politician: str = None
+    politician_url: str = None
     questioner: Optional[str] = None
-    politician: Optional[str] = None
     subject_area: Optional[str] = None
     answer: Optional[str] = None
     answer_date: Optional[str] = None
