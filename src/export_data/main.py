@@ -20,7 +20,7 @@ class CompleteQuestion(BaseModel):
     question: str
     question_date: str
     questioner: Optional[str] = None
-    respondent: Optional[str] = None
+    politician: Optional[str] = None
     subject_area: Optional[str] = None
     answer: Optional[str] = None
     answer_date: Optional[str] = None
