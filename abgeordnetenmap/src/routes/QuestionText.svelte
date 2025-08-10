@@ -11,7 +11,8 @@
 <div>
 	<div>Frage</div>
 	<div>{question_date}</div>
-	<p>{question}<p>
+	<p>{question}</p>
+	{#if subject_area !== null}<div>Thema: {subject_area}</div>{/if}
 </div>
 <div>
 	{#if answer !== null}
