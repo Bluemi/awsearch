@@ -1,14 +1,9 @@
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-node';
 
 const config = {
-  kit: {
-    adapter: adapter({
-      // default options are shown
-      pages: 'build',
-      assets: 'build',
-      fallback: 'index.html' // This is crucial for SPAs
-    })
-  }
+    kit: {
+        adapter: adapter()
+    }
 };
 
 export default config;
