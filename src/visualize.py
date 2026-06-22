@@ -5,9 +5,7 @@ from typing import List
 
 import numpy as np
 import pygame as pg
-from viztools.drawable import Drawable
-from viztools.drawable.overlay_text import OverlayText, OverlayPosition
-from viztools.drawable.points import Points
+from viztools.drawable import Drawable, OverlayText, Points
 from viztools.viewer import Viewer
 
 from data import load_qa_id
@@ -77,7 +75,7 @@ class EmbeddingViewer(Viewer):
                     text_parts.append('\n<keine Antwort>')
                 self.question_text = OverlayText(
                     '\n'.join(text_parts),
-                    OverlayPosition.BOT,
+                    np.array([10, 10]),
                     background_color=(30, 30, 30, 200),
                     border_color=(50, 50, 50, 200),
                     font_name='liberationmono',

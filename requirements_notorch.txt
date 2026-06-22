@@ -1,0 +1,11 @@
+pydantic~=2.11.5
+abgeordnetenwatch_python~=0.1.0
+
+tqdm~=4.67.1
+numpy~=2.3
+scikit-learn~=1.6.1
+matplotlib==3.10.3
+viztools~=0.3
+pygame~=2.6
+protobuf~=6.31
+
